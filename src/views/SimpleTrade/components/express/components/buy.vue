@@ -4,7 +4,7 @@
       <div class="enter-amount">
         <div class="text-hint">I want to pay</div>
         <el-form-item :rules="rule" class="input-container" >
-          <el-input  v-model="buyForm.fiatAmount" placeholder="Enter Amount" @focus="inputFiat"></el-input>
+          <el-input  v-model="buyForm.fiatAmount" placeholder="Enter Amount" :disabled="buyForm.fiatType===''" @input="inputFiat"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="buyForm.fiatType" filterable placeholder="Fiat" @change="selectFiat">
@@ -20,7 +20,7 @@
       <div class="enter-amount">
         <div class="text-hint">I will receive</div>
         <el-form-item :rules="rule" class="input-container">
-          <el-input v-model="buyForm.currencyAmount" placeholder="Enter Amount"  @focus="inputCurrency"></el-input>
+          <el-input v-model="buyForm.currencyAmount" placeholder="Enter Amount" :disabled="buyForm.currencyType===''"  @input="inputCurrency"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="buyForm.currencyType" filterable placeholder="Currency" @change="selectCurrency">
@@ -37,12 +37,10 @@
     <div style="padding: 10%">
       <el-button type="primary" style="width: 100%" @click="submitForm(buyForm)">buy</el-button>
     </div>
-    <el-button @click="websocketSend('eth')">aaa</el-button>
   </div>
 </template>
 
 <script>
-import {getCurrentPrice} from "@/api/simpleTrade";
 
 export default {
   name: "buy",
@@ -54,8 +52,12 @@ export default {
         currencyType: '',
         currencyAmount: '',
       },
-      fiatRate: 0,
-      currentPrice: '',
+      fiatRate: 7,
+      curCurrencyStatus: {
+        curCurrencyPrice: '',
+        curCurrencyType: ''
+      },
+
       rule: [
         { required: true, message: 'Amount cannot less 0!'},
         { type: 'number', message: 'Fiat must be number!'}
@@ -63,12 +65,12 @@ export default {
 
       currencyInfo: [{
         id: 1,
-        currencySymbol: 'BTC',
+        currencySymbol: 'btc',
         currencyImg: 'link',
         currentPrice: 100
       }, {
         id: 2,
-        currencySymbol: 'ITF',
+        currencySymbol: 'ift',
         currencyImg: 'link',
         currentPrice: 1000
       }, {
@@ -114,22 +116,21 @@ export default {
     this.allCurrency = this.$store.getters.allCurrency
     this.allFiat = this.$store.getters.allFiat
     // 建立socket连接， 并设置socket信息返回接受函数
-    this.$socketApi.initWebSocket( 'ws://10.144.211.163:8080/ws/sid/btc', this.getsocketResult);
-    // this.websocketSend('你好')
+    this.$socketApi.initWebSocket( 'ws://10.144.211.163:8080/ws/sid/btc', this.setCurrentCurrency);
   },
   beforeDestroy(){
     this.$socketApi.closeWebSocket();
   },
   methods: {
-    getsocketResult(data) {
-      console.log(data);
+    setCurrentCurrency(data) {
+      this.curCurrencyStatus.curCurrencyPrice = data.currentPrice
+      this.curCurrencyStatus.curCurrencyType = data.symbol
     },
     websocketSend(data) {
-      console.log(data)
       this.$socketApi.sendSock(data);
     },
     inputFiat() {
-      this.buyForm.currencyAmount = this.buyForm.fiatAmount/this.currentPrice/this.fiatRate
+      this.buyForm.currencyAmount = this.buyForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate || 0
     },
     selectFiat() {
       this.fiatRate = this.fiatInfo.filter(item=>{
@@ -137,26 +138,23 @@ export default {
       })[0].fiatRate
     },
     inputCurrency() {
-      this.buyForm.fiatAmount = this.buyForm.currencyAmount * this.currentPrice * this.fiatRate
+      this.buyForm.fiatAmount = this.buyForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate || 0
     },
     async selectCurrency() {
-      const loading = this.$loading({
+      let loading = this.$loading({
         lock: true,
         text: 'Loading',
         spinner: 'el-icon-loading',
         background: 'rgba(255, 255, 255, 0.9)'
       });
-      try {
-        var selectCurrencyId = this.allCurrency.filter(item=>{
-          return item.currencySymbol === this.buyForm.currencyType
-        })[0].id
-      } catch (err) {
-        console.log(err)
-      }
-      let res = await getCurrentPrice(selectCurrencyId)
-          .then(()=>{this.currentPrice = res.currentPrice})
-          .catch(()=>{loading.close();})
-
+      this.websocketSend(this.buyForm.currencyType)
+      let waitStatus = setInterval(()=>{
+        console.log(this.buyForm.currencyType +'---'+ this.curCurrencyStatus.curCurrencyType)
+        if(this.buyForm.currencyType === this.curCurrencyStatus.curCurrencyType) {
+          loading.close()
+          clearInterval(waitStatus)
+        }
+      }, 500)
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

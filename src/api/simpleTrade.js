@@ -1,6 +1,6 @@
 import request from "@/network/request";
 
-export function geyAllCurrency(param) {
+export function getAllCurrency(param) {
     return request({
         url: '/v1/currency/get-all',
         method: 'get',
@@ -8,18 +8,19 @@ export function geyAllCurrency(param) {
     })
 }
 
-export function geyAllFiat(param) {
+export function getAllFiat(param) {
     return request({
-        url: '/v1/fiat/get-all',
+        url: '/v1/payment/flat/list?limit=3&offset=1',
         method: 'get',
         param
     })
 }
 
-export function getCurrentPrice(param) {
+export function getCard(param) {
     return request({
-        url: '/v1/currency/' + param,
+        url: '/v1/card',
         method: 'get',
+        param
     })
 }
 

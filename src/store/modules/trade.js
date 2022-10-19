@@ -1,4 +1,4 @@
-import {geyAllCurrency, geyAllFiat} from "@/api/simpleTrade";
+import {getAllCurrency, getAllFiat} from "@/api/simpleTrade";
 
 const getDefaultState = () => {
     return {
@@ -23,7 +23,7 @@ const mutations = {
 const actions = {
     getAllCurrency({ commit }) {
         return new Promise((resolve, reject) => {
-            geyAllCurrency().then(response => {
+            getAllCurrency().then(response => {
                 commit('SET_AllCURRENCY', response)
                 resolve()
             }).catch(error => {
@@ -33,7 +33,7 @@ const actions = {
     },
     getAllFiat({ commit }) {
         return new Promise((resolve, reject) => {
-            geyAllFiat().then(response => {
+            getAllFiat().then(response => {
                 const { record } = response
                 commit('SET_ALLFIAT', record)
                 resolve()
