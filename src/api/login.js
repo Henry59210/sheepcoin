@@ -2,7 +2,7 @@ import request from '@/network/request'
 
 export function register(data) {
     return request({
-        url: '/v1/register',
+        url: '/authservice/v1/register',
         method: 'post',
         data
     })
@@ -10,7 +10,7 @@ export function register(data) {
 
 export function login(data) {
     return request({
-        url: '/v1/login',
+        url: '/authservice/v1/login',
         method: 'post',
         data
     })

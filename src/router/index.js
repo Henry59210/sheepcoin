@@ -61,11 +61,13 @@ const constantRoutes = [
               {
                 path: 'buy',
                 component: ()=> import('@/views/SimpleTrade/components/express/components/buy'),
+                name: 'buy',
                 meta: {activateName: 'express'}
               },
               {
                 path: 'sell',
                 component: ()=> import('@/views/SimpleTrade/components/express/components/sell'),
+                name: 'sell',
                 meta: {activateName: 'express'}
               }
             ]

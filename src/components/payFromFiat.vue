@@ -1,16 +1,28 @@
 <template>
-  <div class="fiat-payment-container">
-    <div class="price-display-container">
-
-    </div>
-    <div class="cards-display-container">
-      <div class="card-place" v-for="(item,index) in userCards" :key="index">
-        <el-card shadow="hover" class="box-card" :class={} @click="selectedCard">
-          {{ item.replace(/.(?=.{4})/g, '*') }}
-        </el-card>
+  <div>
+    <div v-if="!isSuccess"  class="fiat-payment-container" v-loading="loading">
+      <div class="price-display-container">
+        {{ finalForm.fiatType + '  ' + finalForm.fiatAmount }}
+      </div>
+      <div class="cards-display-container">
+        <div class="card-place" v-for="item in userCards" :key="item.id">
+          <el-card shadow="hover" class="box-card" :class="{'isActivated': selectedCard===item.id }" @click.native="chooseCard(item)">
+            <div class="card-info">
+              {{ item.cardNo.toString().replace(/.(?=.{4})/g, '*') }}
+            </div>
+            <div class="card-select-status">
+              <i v-if="selectedCard===item.id" class="el-icon-check"></i>
+            </div>
+          </el-card>
+        </div>
       </div>
     </div>
+    <div v-if="isSuccess" class="fiat-payment-container">
+        <el-result icon="success" title="Payment Success!" subTitle="enjoy your investment">
+        </el-result>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -18,10 +30,23 @@ import {getCard} from "@/api/simpleTrade";
 
 export default {
   name: "payFromFiat",
+  props: {
+    finalForm: {
+      type: Object,
+      default: ()=> {
+        return { }
+      }
+    }
+  },
   data() {
     return {
+      isSuccess: false,
+      paymentDialogVisible: false,
+      isChooseCard: false,
+      loading: false,
       selectedCard: '',
-      userCards: []
+      userCards: [{id:1, cardNo: 1111111114444},{id:2, cardNo: 1111111115555},{id:3, cardNo: 111111111666}],
+      paymentCard: {}
     }
   },
   created() {
@@ -32,6 +57,11 @@ export default {
       let res = await getCard()
       this.userCards = res.data
     },
+    chooseCard(cardInfo) {
+      this.selectedCard = cardInfo.id
+      this.paymentCard = cardInfo
+      this.isChooseCard = true
+    }
   }
 }
 </script>
@@ -42,16 +72,39 @@ export default {
   height: 100%;
 }
 .price-display-container {
+  font-size: 25px;
+  text-align: center;
+  padding: 10%;
   height: 30%;
+  box-sizing: border-box;
 }
 .cards-display-container {
   height: 70%;
   overflow: scroll;
 }
 .card-place {
-
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 15px;
+  letter-spacing: 4px
 }
 .box-card {
-
+  cursor: pointer;
+}
+.card-info {
+  display: inline-block;
+  width: 80%;
+}
+.card-select-status {
+  display: inline-block;
+  text-align: right;
+  width: 20%;
+}
+.isActivated {
+  border: 1px solid #ff8800;
+}
+.el-icon-check {
+  color: green;
 }
 </style>

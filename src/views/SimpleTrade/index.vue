@@ -15,13 +15,29 @@
     <div class="trade-area">
       <router-view></router-view>
     </div>
+    <el-dialog
+        title="Payment"
+        :visible.sync="fiatPaymentDialogVisible"
+        width="40%"
+        center>
+          <div class="dialog-content-container">
+            <pay-from-fiat ref="payFromFiat" :finalForm="buyForm"></pay-from-fiat>
+          </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="cancelPayment">cancel</el-button>
+    <el-button type="primary" @click="confirmPayment">Confirm Payment</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 
+import PayFromFiat from "@/components/payFromFiat";
+
 export default {
   name: "simple-trade",
+  components: {PayFromFiat},
   data() {
     return {
       activateName: 'express',
@@ -33,9 +49,20 @@ export default {
           this.activateName = route.meta.activateName.toLowerCase() //fix bug： 切换导航菜单时activateName不变，会导致样式无法更新，只有三层路由会有问题
         },
         immediate: true
-      }
+      },
   },
   computed: {
+    fiatPaymentDialogVisible: {
+      get() {
+        return this.$store.state.trade.fiatPaymentDialogVisible
+      },
+      set(status) {
+        this.$store.state.trade.fiatPaymentDialogVisible = status
+      }
+    },
+    buyForm() {
+      return this.$store.state.trade.buyForm
+    },
     simpleTrade() {
       return this.$router.options.routes.filter(item => {
         return item.path === '/simpleTrade'
@@ -52,6 +79,27 @@ export default {
     }
   },
   methods: {
+    confirmPayment() {
+      if ( this.$refs.payFromFiat.isChooseCard ) {
+        if( !this.$refs.payFromFiat.isSuccess ){
+          this.$refs.payFromFiat.loading = true
+          setTimeout(()=>{
+            this.$refs.payFromFiat.loading = false
+            this.$refs.payFromFiat.isSuccess = true
+          }, 1000)
+        } else {
+          this.$store.state.trade.fiatPaymentDialogVisible = false
+          this.$refs.payFromFiat.isSuccess = false
+        }
+      } else {
+        this.$message.warning('Please choose your card!')
+      }
+
+    },
+    cancelPayment() {
+      this.fiatPaymentDialogVisible = false
+      this.$refs.payFromFiat.isChooseCard = false
+    },
     handClick(key) {
       console.log(key)
       this.$router.push('/simpleTrade/trade/' + key)
@@ -73,6 +121,11 @@ export default {
 .el-menu-demo {
   padding: 0 10%;
 }
+.dialog-content-container {
+  width: 100%;
+  height: 40vh;
+}
+
 /deep/.el-menu-item {
   font-size: 17px;
 }

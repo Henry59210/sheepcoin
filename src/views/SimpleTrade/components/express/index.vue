@@ -18,24 +18,31 @@
 
 <script>
 
-// import {geyAllCurrency, geyAllFiat} from "@/api/simpleTrade";
 
 export default {
   name: "express",
   data () {
     return {
-      activedOption: 'buy',
       allCurrency: [],
       allFiat: []
     }
   },
   created() {
-    this.$store.dispatch('trade/geyAllCurrency')
-    this.$store.dispatch('trade/geyAllFiat')
+    this.$store.dispatch('trade/getAllCurrency')
+    this.$store.dispatch('trade/getAllFiat')
+  },
+  computed: {
+    activedOption: {
+      get() {
+        return this.$route.name
+      },
+      set() {}
+    }
   },
   methods: {
     clickTradeType(type) {
       type === 'buy' ? this.activedOption='buy' : this.activedOption='sell'
+      console.log(type, this.activedOption)
       this.$router.replace(type)
     },
   }
@@ -53,7 +60,7 @@ export default {
   position: absolute;
   border-radius: 20px;
   height: 80%;
-  width: 45%;
+  width: 40%;
   top: 50%;
   left: 43%;
   transform: translateY(-50%);

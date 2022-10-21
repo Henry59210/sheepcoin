@@ -1,33 +1,33 @@
 <template>
   <div class="buy-operate-container">
-    <el-form :inline="true" :model="buyForm" ref="buyForm" class="demo-form-inline">
+    <el-form :inline="true" :model="buyForm" ref="buyForm" :rules="rule" class="demo-form-inline">
       <div class="enter-amount">
         <div class="text-hint">I want to pay</div>
-        <el-form-item :rules="rule" class="input-container" >
-          <el-input  v-model="buyForm.fiatAmount" placeholder="Enter Amount" :disabled="buyForm.fiatType===''" @input="inputFiat"></el-input>
+        <el-form-item class="input-container" prop="fiat">
+          <el-input v-model.number="buyForm.fiatAmount" placeholder="Enter Amount" :disabled="buyForm.fiatType===''" @input="inputFiat"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="buyForm.fiatType" filterable placeholder="Fiat" @change="selectFiat">
             <el-option
-                v-for="item in fiatInfo"
-                :key="item.fiatName"
-                :label="item.fiatName"
-                :value="item.fiatName">
+                v-for="item in allFiat"
+                :key="item.fiatSymbol"
+                :label="item.fiatSymbol"
+                :value="item.fiatSymbol">
             </el-option>
           </el-select>
         </el-form-item>
       </div>
       <div class="enter-amount">
         <div class="text-hint">I will receive</div>
-        <el-form-item :rules="rule" class="input-container">
-          <el-input v-model="buyForm.currencyAmount" placeholder="Enter Amount" :disabled="buyForm.currencyType===''"  @input="inputCurrency"></el-input>
+        <el-form-item class="input-container" prop="currency">
+          <el-input v-model.number="buyForm.currencyAmount" placeholder="Enter Amount" :disabled="buyForm.currencyType===''" @input="inputCurrency"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="buyForm.currencyType" filterable placeholder="Currency" @change="selectCurrency">
             <el-option
-                v-for="item in currencyInfo"
+                v-for="item in allCurrency"
                 :key="item.currencySymbol"
-                :label="item.currencySymbol"
+                :label="item.currencyName"
                 :value="item.currencySymbol">
             </el-option>
           </el-select>
@@ -35,7 +35,7 @@
       </div>
     </el-form>
     <div style="padding: 10%">
-      <el-button type="primary" style="width: 100%" @click="submitForm(buyForm)">buy</el-button>
+      <el-button type="primary" style="width: 100%" @click="submitForm('buyForm')">buy</el-button>
     </div>
   </div>
 </template>
@@ -54,72 +54,35 @@ export default {
       },
       fiatRate: 7,
       curCurrencyStatus: {
-        curCurrencyPrice: '',
-        curCurrencyType: ''
+        curCurrencyPrice: '10',
+        curCurrencyType: 'btc'
       },
-
-      rule: [
-        { required: true, message: 'Amount cannot less 0!'},
-        { type: 'number', message: 'Fiat must be number!'}
-      ],
-
-      currencyInfo: [{
-        id: 1,
-        currencySymbol: 'btc',
-        currencyImg: 'link',
-        currentPrice: 100
-      }, {
-        id: 2,
-        currencySymbol: 'ift',
-        currencyImg: 'link',
-        currentPrice: 1000
-      }, {
-        id: 3,
-        currencySymbol: 'BOC',
-        currencyImg: 'link',
-        currentPrice: 1000
-      }, {
-        id: 4,
-        currencySymbol: 'BAN',
-        currencyImg: 'link',
-        currentPrice: 100
-      }, {
-        id: 5,
-        currencySymbol: 'CTT',
-        currencyImg: 'link',
-        currentPrice: 100
+      rule: {
+        fiat: [
+          { required: true, message: 'Amount cannot less 0!'},
+          { type: 'number', message: 'Fiat must be number!'}
+        ],
+        currency: [
+          { required: true, message: 'Amount cannot less 0!'},
+          { type: 'number', message: 'Fiat must be number!'}
+        ],
       },
-      ],
-      fiatInfo: [
-          {
-        fiatName: 'USD',
-        fiatImg: 'link',
-        fiatRate: 1
-      },{
-        fiatName: 'RMB',
-        fiatImg: 'link',
-        fiatRate: 7.1
-      },{
-        fiatName: 'SGD',
-        fiatImg: 'link',
-        fiatRate: 1.2
-      },{
-        fiatName: 'YEN',
-        fiatImg: 'link',
-        fiatRate: 20
-      }],
-      allCurrency: [],
-      allFiat: []
     }
   },
   mounted(){
-    this.allCurrency = this.$store.getters.allCurrency
-    this.allFiat = this.$store.getters.allFiat
     // 建立socket连接， 并设置socket信息返回接受函数
-    this.$socketApi.initWebSocket( 'ws://10.144.211.163:8080/ws/sid/btc', this.setCurrentCurrency);
+    this.$socketApi.initWebSocket( 'ws://43.156.54.223:30081/sheepservice/ws/sid/btc', this.setCurrentCurrency);
   },
   beforeDestroy(){
     this.$socketApi.closeWebSocket();
+  },
+  computed: {
+    allCurrency() {
+      return this.$store.getters.allCurrency
+    },
+    allFiat() {
+      return this.$store.getters.allFiat
+    }
   },
   methods: {
     setCurrentCurrency(data) {
@@ -133,9 +96,9 @@ export default {
       this.buyForm.currencyAmount = this.buyForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate || 0
     },
     selectFiat() {
-      this.fiatRate = this.fiatInfo.filter(item=>{
-        return item.fiatName === this.buyForm.fiatType
-      })[0].fiatRate
+      this.fiatRate = this.allFiat.filter(item=>{
+        return item.fiatSymbol === this.buyForm.fiatType
+      })[0].usdexRate
     },
     inputCurrency() {
       this.buyForm.fiatAmount = this.buyForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate || 0
@@ -159,13 +122,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(valid)
+          this.$store.commit('trade/SET_BUYFORM', this.buyForm)
+          this.$store.commit('trade/SET_FIATDIALOG', true)
         } else {
           console.log('error submit!!');
           return false;
         }
       });
-    },
+    }
   }
 }
 </script>
