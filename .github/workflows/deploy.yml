@@ -55,7 +55,7 @@ jobs:
           command: |
             cd /root/ordersystem-vue
             docker build -t web-vue:latest .
-            kubectl delete pod $(kubectl get pod -n project1 | grep web-app | awk '{print $1}') -n project1
+            kubectl delete pod $(kubectl get pod -n sheepcoin | grep web-app | awk '{print $1}') -n sheepcoin
           host: ${{ secrets.HOST }}
           username: root
           port: 22
