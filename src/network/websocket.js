@@ -6,6 +6,7 @@ var webSocket = null;
 var isConnect = false; //连接状态
 var globalCallback = function(e){ console.log(e) };//定义外部接收数据的回调函数
 var reConnectNum = 0;//重连次数
+var baseURL = 'ws://43.156.54.223:30080'
 
 //心跳设置
 var heartCheck = {
@@ -32,6 +33,7 @@ var heartCheck = {
 
 //初始化websocket
 function initWebSocket(websocketUrl,callback) {
+    let url = baseURL + websocketUrl
     //此callback为在其他地方调用时定义的接收socket数据的函数
     if(callback){
         if(typeof callback == 'function'){
@@ -41,7 +43,7 @@ function initWebSocket(websocketUrl,callback) {
         }
     }
     if ("WebSocket" in window) {
-        webSocket = new WebSocket(websocketUrl);//创建socket对象
+        webSocket = new WebSocket(url);//创建socket对象
     } else {
         Message({
             message: 'Your browser is not support websocket!',

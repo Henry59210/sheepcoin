@@ -48,7 +48,8 @@
         </el-table-column>
       </el-table>
     </div>
-    <currency-detail></currency-detail>
+    <el-button @click="visible=true">aaa</el-button>
+    <currency-detail v-if="visible" :visible="visible" @close="closeDialog"></currency-detail>
   </div>
 </template>
 
@@ -60,11 +61,17 @@ export default {
   methods: {
     handleClick(row) {
       console.log(row);
+    },
+    open() {
+      this.$refs.currencyDetail.visible = true
+    },
+    closeDialog(){
+      this.visible = false
     }
   },
-
   data() {
     return {
+      visible: false,
       // data: [
       //   {
       //     item: ,

@@ -42,6 +42,7 @@
 
 <script>
 
+
 export default {
   name: "buy",
   data() {
@@ -52,18 +53,16 @@ export default {
         currencyType: '',
         currencyAmount: '',
       },
-      fiatRate: 7,
+      fiatRate: 0,
       curCurrencyStatus: {
         curCurrencyPrice: '10',
         curCurrencyType: 'btc'
       },
       rule: {
         fiat: [
-          { required: true, message: 'Amount cannot less 0!'},
           { type: 'number', message: 'Fiat must be number!'}
         ],
         currency: [
-          { required: true, message: 'Amount cannot less 0!'},
           { type: 'number', message: 'Fiat must be number!'}
         ],
       },
@@ -71,7 +70,7 @@ export default {
   },
   mounted(){
     // 建立socket连接， 并设置socket信息返回接受函数
-    this.$socketApi.initWebSocket( 'ws://43.156.54.223:30081/sheepservice/ws/sid/btc', this.setCurrentCurrency);
+    this.$socketApi.initWebSocket( '/ws/sid/btc', this.setCurrentCurrency);
   },
   beforeDestroy(){
     this.$socketApi.closeWebSocket();

@@ -134,7 +134,7 @@ export default {
     this.allCurrency = this.$store.getters.allCurrency
     this.allFiat = this.$store.getters.allFiat
     // 建立socket连接， 并设置socket信息返回接受函数
-    this.$socketApi.initWebSocket( 'ws://43.156.54.223:30081/sheepservice/ws/sid/btc', this.setCurrentCurrency);
+    this.$socketApi.initWebSocket( '/ws/sid/btc', this.setCurrentCurrency);
   },
   beforeDestroy(){
     this.$socketApi.closeWebSocket();

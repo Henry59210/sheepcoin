@@ -31,6 +31,12 @@ export default {
       default: () => {
         return {}
       }
+    },
+    visible: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
     }
   },
   data() {
@@ -44,7 +50,7 @@ export default {
       handler(val) {
         this.setOptions(val)
       }
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -79,7 +85,7 @@ export default {
       })
     },
     close() {
-
+      this.$emit('close', false)
     }
   }
 }

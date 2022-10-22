@@ -18,7 +18,7 @@ export function getAllFiat(param) {
 
 export function getCard(param) {
     return request({
-        url: '/paymentservice/v1/card',
+        url: '/sheepservice/v1/card',
         method: 'get',
         param
     })
@@ -26,7 +26,7 @@ export function getCard(param) {
 
 export function getCurrencyAmount(param) {
     return request({
-        url: '/v1/card',
+        url: '/v1/user/wallet/list/' + param,
         method: 'get',
         param
     })

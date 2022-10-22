@@ -100,22 +100,25 @@ const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'overview',
-        name: 'Overview',
-        component: () => import('@/views/UserAccount/overview'),
-        meta: { title: 'Account' }
-      },
-      {
-        path: 'order',
-        name: 'Order',
-        component: () => import('@/views/UserAccount/order'),
-        meta: { title: 'Order' }
-      },
-      {
-        path: 'wallet',
-        name: 'Wallet',
-        component: () => import('@/views/UserAccount/wallet'),
-        meta: { title: 'Wallet' }
+        path: '',
+        name: 'Account',
+        redirect: '/account/wallet',
+        component: () => import('@/views/UserAccount/account'),
+        meta: { title: 'Account' },
+        children: [
+          {
+            path: 'wallet',
+            name: 'Wallet',
+            component: () => import('@/views/UserAccount/components/wallet'),
+            meta: { title: 'Account' }
+          },
+          {
+            path: 'order',
+            name: 'Order',
+            component: () => import('@/views/UserAccount/components/order'),
+            meta: { title: 'Order' }
+          }
+        ]
       },
       {
         path: 'logout',
