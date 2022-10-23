@@ -24,7 +24,7 @@
             <pay-from-fiat ref="payFromFiat" :finalForm="buyForm"></pay-from-fiat>
           </div>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="cancelPayment">cancel</el-button>
+    <el-button @click="cancelPayment" :disabled="canNotCancel">cancel</el-button>
     <el-button type="primary" @click="confirmPayment">Confirm Payment</el-button>
   </span>
     </el-dialog>
@@ -34,6 +34,7 @@
 <script>
 
 import PayFromFiat from "@/components/payFromFiat";
+import {topUp} from "@/api/account";
 
 export default {
   name: "simple-trade",
@@ -41,6 +42,7 @@ export default {
   data() {
     return {
       activateName: 'express',
+      canNotCancel: false
     };
   },
   watch: {
@@ -79,17 +81,28 @@ export default {
     }
   },
   methods: {
-    confirmPayment() {
+    async confirmPayment() {
       if ( this.$refs.payFromFiat.isChooseCard ) {
         if( !this.$refs.payFromFiat.isSuccess ){
           this.$refs.payFromFiat.loading = true
-          setTimeout(()=>{
+          let topUpData = {
+            userId: this.$store.getters.userid,
+            amount: this.buyForm.currencyAmount,
+            currencySymbol:  this.buyForm.currencyType
+          }
+          await topUp(topUpData).then(()=>{
+            setTimeout(()=>{
+              this.$refs.payFromFiat.loading = false
+              this.$refs.payFromFiat.isSuccess = true
+              this.canNotCancel = true
+            }, 800)
+          }).catch(()=>{
             this.$refs.payFromFiat.loading = false
-            this.$refs.payFromFiat.isSuccess = true
-          }, 1000)
+          })
         } else {
           this.$store.state.trade.fiatPaymentDialogVisible = false
           this.$refs.payFromFiat.isSuccess = false
+          this.canNotCancel = false
         }
       } else {
         this.$message.warning('Please choose your card!')

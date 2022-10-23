@@ -4,6 +4,7 @@
       <div class="price-display-container">
         {{ finalForm.fiatType + '  ' + finalForm.fiatAmount }}
       </div>
+      <div>{{ 'you will receive' + finalForm.currencyAmount + ' ' + finalForm.currencyType}}</div>
       <div class="cards-display-container">
         <div class="card-place" v-for="item in userCards" :key="item.id">
           <el-card shadow="hover" class="box-card" :class="{'isActivated': selectedCard===item.id }" @click.native="chooseCard(item)">
@@ -34,7 +35,7 @@ export default {
     finalForm: {
       type: Object,
       default: ()=> {
-        return { }
+        return {}
       }
     }
   },
@@ -45,7 +46,7 @@ export default {
       isChooseCard: false,
       loading: false,
       selectedCard: '',
-      userCards: [{id:1, cardNo: 1111111114444},{id:2, cardNo: 1111111115555},{id:3, cardNo: 111111111666}],
+      userCards: [],
       paymentCard: {}
     }
   },
@@ -54,8 +55,10 @@ export default {
   },
   methods: {
     async getUserCard() {
+      this.loading = true
       let res = await getCard()
       this.userCards = res.data
+      this.loading = false
     },
     chooseCard(cardInfo) {
       this.selectedCard = cardInfo.id

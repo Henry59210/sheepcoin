@@ -26,7 +26,7 @@ export function getCard(param) {
 
 export function getCurrencyAmount(param) {
     return request({
-        url: '/v1/user/wallet/list/' + param,
+        url: '/paymentservice/v1/user/wallet/list/' + param,
         method: 'get',
         param
     })
@@ -39,4 +39,3 @@ export function getIcon(param) {
         param
     })
 }
-

@@ -1,8 +1,8 @@
 <template>
  <div>
    <div class="assets-valuation">
-     <div class="title">Your assets valuation:</div>
-     <div style="font-size: 20px">{{ '≈ ' + asset }}</div>
+     <div class="title" >Your assets valuation:</div>
+     <div style="font-size: 20px;">{{ '≈ ' + asset }}</div>
    </div>
    <div class="all-currency">
      <div class="title">
@@ -15,36 +15,35 @@
        >
          <el-table-column
              prop="currencySymbol"
-             label="Name"
-             width="180">
+             label="Name">
          </el-table-column>
          <el-table-column
              prop="amount"
              label="Amount"
-             sortable
-             width="180">
+             sortable>
          </el-table-column>
          <el-table-column
              prop="price"
              label="Price"
-             sortable
-             width="180">
+             sortable>
          </el-table-column>
          <el-table-column
                prop="change"
                label="24H change"
-               sortable
-               width="180">
+               sortable>
          </el-table-column>
          <el-table-column
              fixed="right"
-             label="top-up"
-             width="100">
+             label="top-up">
            <template slot-scope="scope">
              <el-button @click="handleTopUp(scope.row)" type="text" size="small">top-up</el-button>
            </template>
          </el-table-column>
        </el-table>
+       <el-pagination
+           layout="prev, pager, next"
+           :page-size="10">
+       </el-pagination>
      </div>
    </div>
    <el-dialog
@@ -101,7 +100,7 @@ export default {
     this.getWalletList()
   },
   beforeDestroy(){
-    this.$socketApi.closeWebSocket();
+    if(this.walletCurrencyStatus.length !== 0) this.$socketApi.closeWebSocket();
   },
   methods: {
     handleTopUp() {
@@ -133,21 +132,26 @@ export default {
 
 <style scoped>
 .assets-valuation {
-  height: 100px;
+  height: 120px;
+  padding: 10px 5%;
+  background: #efefef;
+  box-sizing: border-box;
 }
 .all-currency {
   position: absolute;
+  padding: 0 5%;
+  box-sizing: border-box;
   bottom: 0;
-  top: 100px;
+  top: 120px;
   width: 100%;
 }
 .title {
   font-size: 25px;
   line-height: 25px;
   font-family: BinancePlex,Arial,sans-serif;
-  padding-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 .table-container {
-  width: 100%;
 }
 </style>

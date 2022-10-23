@@ -18,7 +18,7 @@ export function login(data) {
 
 export function getInfo(params) {
     return request({
-        url: '/v1/userAccount',
+        url: '/sheepservice/v1/account',
         method: 'get',
         params
     })

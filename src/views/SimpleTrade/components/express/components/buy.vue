@@ -35,7 +35,7 @@
       </div>
     </el-form>
     <div style="padding: 10%">
-      <el-button type="primary" style="width: 100%" @click="submitForm('buyForm')">buy</el-button>
+      <el-button type="primary" :disabled="buyForm.currencyAmount===''&&buyForm.currencyAmount===''" style="width: 100%" @click="submitForm('buyForm')">buy</el-button>
     </div>
   </div>
 </template>
@@ -55,8 +55,8 @@ export default {
       },
       fiatRate: 0,
       curCurrencyStatus: {
-        curCurrencyPrice: '10',
-        curCurrencyType: 'btc'
+        curCurrencyPrice: '',
+        curCurrencyType: ''
       },
       rule: {
         fiat: [
@@ -75,6 +75,16 @@ export default {
   beforeDestroy(){
     this.$socketApi.closeWebSocket();
   },
+  watch: {
+    'curCurrencyStatus.curCurrencyPrice': {
+      handler(val, oldval) {
+        if(val != oldval  && this.buyForm.fiatAmount) {
+          this.inputFiat()
+        }
+      },
+      deep: true
+    }
+  },
   computed: {
     allCurrency() {
       return this.$store.getters.allCurrency
@@ -92,7 +102,7 @@ export default {
       this.$socketApi.sendSock(data);
     },
     inputFiat() {
-      this.buyForm.currencyAmount = this.buyForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate || 0
+      this.buyForm.currencyAmount = (this.buyForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate).toFixed(4) || 0
     },
     selectFiat() {
       this.fiatRate = this.allFiat.filter(item=>{
@@ -100,7 +110,7 @@ export default {
       })[0].usdexRate
     },
     inputCurrency() {
-      this.buyForm.fiatAmount = this.buyForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate || 0
+      this.buyForm.fiatAmount = (this.buyForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate).toFixed(2) || 0
     },
     async selectCurrency() {
       let loading = this.$loading({

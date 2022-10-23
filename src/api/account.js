@@ -15,3 +15,18 @@ export function topUp(data) {
         data: data
     })
 }
+
+export function deleteCards(param) {
+    return request({
+        url: 'sheepservice/v1/card/' + param,
+        method: 'delete',
+    })
+}
+
+export function addCard(data) {
+    return request({
+        url: 'sheepservice/v1/card',
+        method: 'post',
+        data: data
+    })
+}
