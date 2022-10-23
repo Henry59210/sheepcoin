@@ -32,3 +32,11 @@ export function getCurrencyAmount(param) {
     })
 }
 
+export function getIcon(param) {
+    return request({
+        url: '/sheepservice/v1/currency/icon/' + param,
+        method: 'get',
+        param
+    })
+}
+

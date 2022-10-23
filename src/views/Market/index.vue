@@ -1,55 +1,61 @@
 <template>
   <div>
-    <div class="title-container">Market</div>
+    <div class="title-container">Markets</div>
     <div class="market-data-container">
       <el-table
-          :data="tableData"
-          border
-          style="width: 100%">
+          :data="allCurrency"
+          style="width: 100%"
+          stripe>
         <el-table-column
-            fixed
-            prop="date"
-            label="日期"
-            width="150">
+            label="Name">
+          <template slot-scope="scope">
+            <span class="table-font" style="font-size: 17px; font-weight: bold; color: black">{{ scope.row.symbol.toUpperCase() }}</span>
+            <span style="margin-left: 10px;">{{ scope.row.name }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-            prop="name"
-            label="姓名"
-            width="120">
+            prop="currentPrice"
+            label="Price"
+            sortable>
         </el-table-column>
         <el-table-column
-            prop="province"
-            label="省份"
-            width="120">
+            label="24H change"
+            sortable>
+          <template slot-scope="scope">
+            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage1hInCurrency>0, 'decrease': scope.row.priceChangePercentage1hInCurrency<0}">{{ (scope.row.priceChangePercentage1hInCurrency * 100).toFixed(3) + ' %' }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-            prop="city"
-            label="市区"
-            width="120">
+            label="1H change"
+            sortable>
+          <template slot-scope="scope">
+            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage24h>0, 'decrease': scope.row.priceChangePercentage24h<0}">{{ (scope.row.priceChangePercentage24h * 100).toFixed(3) + ' %' }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-            prop="address"
-            label="地址"
-            width="300">
+            label="24h High / 24h Low"
+            sortable>
+          <template slot-scope="scope">
+            <span class="table-font">{{ scope.row.high24h + ' / ' + scope.row.low24h }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-            prop="zip"
-            label="邮编"
-            width="120">
+            label="Market Cap"
+            sortable>
+          <template slot-scope="scope">
+            <span class="table-font">{{ '$' + (scope.row.marketCap/1000000).toFixed(3) + ' M' }}</span>
+          </template>
         </el-table-column>
         <el-table-column
             fixed="right"
-            label="操作"
-            width="100">
+            label="top-up">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-            <el-button type="text" size="small">编辑</el-button>
+            <el-button @click="open(scope.row)" type="text" size="small">Detail</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-button @click="visible=true">aaa</el-button>
-    <currency-detail v-if="visible" :visible="visible" @close="closeDialog"></currency-detail>
+    <currency-detail v-if="visible" :visible="visible" :currencyDetail="currencyDetail" @close="closeDialog"></currency-detail>
   </div>
 </template>
 
@@ -58,66 +64,56 @@ import CurrencyDetail from "@/components/currencyDetail";
 export default {
   name: "market-trade",
   components: {CurrencyDetail},
-  methods: {
-    handleClick(row) {
-      console.log(row);
-    },
-    open() {
-      this.$refs.currencyDetail.visible = true
-    },
-    closeDialog(){
-      this.visible = false
-    }
-  },
   data() {
     return {
       visible: false,
-      // data: [
-      //   {
-      //     item: ,
-      //     itemId: 111,
-      //     sellerId: 1,
-      //     amount: 10,
-      //     currencySymbol: 10,
-      //     price: ,
-      //     createTime: ,
-      //     updateTime: ,
-      //   }
-      // ],
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1518 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1517 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1519 弄',
-        zip: 200333
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        province: '上海',
-        city: '普陀区',
-        address: '上海市普陀区金沙江路 1516 弄',
-        zip: 200333
-      }]
+      allCurrency: [],
+      currencyDetail: {}
     }
-  }
+  },
+  mounted() {
+    this.$socketApi.initWebSocket( '/ws/sid/1', this.initCurrency);
+  },
+  beforeDestroy(){
+    this.$socketApi.closeWebSocket();
+  },
+  methods: {
+    open(data) {
+      this.currencyDetail = data
+      this.visible = true
+    },
+    closeDialog() {
+      this.visible = false
+    },
+    handleTopUp() {
+
+    },
+    initCurrency(data) {
+      this.allCurrency = data.records
+      console.log(this.allCurrency);
+    }
+  },
 }
 </script>
 
 <style scoped>
-
+.title-container {
+  font-size: 30px;
+  padding: 4% 2%;
+  font-weight: bold;
+  font-family: Arial;
+  background: #efefef;
+}
+.market-data-container {
+  margin: 0 5%;
+}
+.table-font{
+  font-size: 17px; font-weight: bold
+}
+.increase {
+  color: red;
+}
+.decrease {
+  color: green;
+}
 </style>

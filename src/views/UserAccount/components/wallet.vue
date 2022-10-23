@@ -10,12 +10,11 @@
      </div>
      <div class="table-container">
        <el-table
-           :data="currencyData"
+           :data="userWalletList"
            style="width: 100%"
-           :default-sort = "{prop: 'date', order: 'descending'}"
        >
          <el-table-column
-             prop="name"
+             prop="currencySymbol"
              label="Name"
              width="180">
          </el-table-column>
@@ -54,13 +53,21 @@
        width="30%"
        center>
      <div>
-       <el-select v-model="value" placeholder="Select coin">
+       <el-select v-model="selectedCoin" placeholder="Select coin">
          <el-option
-             v-for="item in options"
+             v-for="item in allCurrency"
              :key="item.value"
              :label="item.label"
              :value="item.value"
              :disabled="item.disabled">
+         </el-option>
+       </el-select>
+       <el-select v-model="selectedCoin" placeholder="Network">
+         <el-option
+             v-for="item in allPlatform"
+             :key="item"
+             :label="item"
+             :value="item">
          </el-option>
        </el-select>
      </div>
@@ -74,18 +81,51 @@
 
 <script>
 
+import {getWalletList} from "@/api/account";
+
 export default {
   name: "wallet",
   data() {
     return {
       topUpDialogVisible: false,
       asset: 0.00,
-      currencyData: []
+      walletCurrencyStatus: [],//拼接前
+      userWalletList: [],//拼接后
+      selectedCoin: '',
+      amount: '',
+      allCurrency: [],
+      allPlatform: ['BTC','ETH','BNB']
     }
+  },
+  mounted() {
+    this.getWalletList()
+  },
+  beforeDestroy(){
+    this.$socketApi.closeWebSocket();
   },
   methods: {
     handleTopUp() {
 
+    },
+    jointWalletList(data) {
+      let currentPrice = data.currentPrice
+      let priceChange24h = data.priceChange24h
+      let symbol = data.symbol
+      this.userWalletList = this.walletCurrencyStatus.map(item=>{
+        if(item.currencySymbol === symbol) {
+          item.price = currentPrice
+          item.change = priceChange24h
+        }
+        this.asset += item.currentPrice * item.amount || 0
+      })
+      console.log(this.userWalletList)
+    },
+    async getWalletList() {
+      let res = await getWalletList('10/1 ')
+      this.walletCurrencyStatus = res.data.records
+      this.walletCurrencyStatus.forEach(item=>{
+        this.$socketApi.initWebSocket( '/ws/sid/' + item, this.jointWalletList);
+      })
     }
   }
 }
