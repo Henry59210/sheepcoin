@@ -15,7 +15,7 @@
         </el-table-column>
         <el-table-column
             prop="currentPrice"
-            label="Price"
+            label="Price($)"
             sortable>
         </el-table-column>
         <el-table-column

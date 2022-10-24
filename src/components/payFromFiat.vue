@@ -23,7 +23,6 @@
         </el-result>
     </div>
   </div>
-
 </template>
 
 <script>

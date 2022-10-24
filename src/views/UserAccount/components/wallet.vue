@@ -2,7 +2,7 @@
  <div>
    <div class="assets-valuation">
      <div class="title" >Your assets valuation:</div>
-     <div style="font-size: 20px;">{{ '≈ ' + asset }}</div>
+     <div style="font-size: 20px;">{{ '≈ ' + asset + ' $'}}</div>
    </div>
    <div class="all-currency">
      <div class="title">
@@ -14,8 +14,11 @@
            style="width: 100%"
        >
          <el-table-column
-             prop="currencySymbol"
              label="Name">
+           <template slot-scope="scope">
+             <span class="table-font" style="font-size: 17px; font-weight: bold; color: black">{{ scope.row.currencySymbol.toUpperCase() }}</span>
+             <span style="margin-left: 10px;">{{ scope.row.name }}</span>
+           </template>
          </el-table-column>
          <el-table-column
              prop="amount"
@@ -24,24 +27,34 @@
          </el-table-column>
          <el-table-column
              prop="price"
-             label="Price"
+             label="Price($)"
              sortable>
          </el-table-column>
          <el-table-column
-               prop="change"
                label="24H change"
                sortable>
+           <template slot-scope="scope">
+             <span class="table-font" :class="{'increase': scope.row.change>0, 'decrease': scope.row.change<0}">{{ (scope.row.change * 100).toFixed(3) + ' %' }}</span>
+           </template>
+         </el-table-column>
+         <el-table-column
+             label="24h High / 24h Low($)"
+             sortable>
+           <template slot-scope="scope">
+             <span class="table-font">{{ scope.row.high24h + ' / ' + scope.row.low24h }}</span>
+           </template>
          </el-table-column>
          <el-table-column
              fixed="right"
              label="top-up">
            <template slot-scope="scope">
-             <el-button @click="handleTopUp(scope.row)" type="text" size="small">top-up</el-button>
+             <el-button @click="handleTopUp(scope.row)" type="text" size="middle">top-up</el-button>
            </template>
          </el-table-column>
        </el-table>
        <el-pagination
            layout="prev, pager, next"
+           :total="total"
            :page-size="10">
        </el-pagination>
      </div>
@@ -51,28 +64,49 @@
        :visible.sync="topUpDialogVisible"
        width="30%"
        center>
-     <div>
-       <el-select v-model="selectedCoin" placeholder="Select coin">
-         <el-option
-             v-for="item in allCurrency"
-             :key="item.value"
-             :label="item.label"
-             :value="item.value"
-             :disabled="item.disabled">
-         </el-option>
-       </el-select>
-       <el-select v-model="selectedCoin" placeholder="Network">
-         <el-option
-             v-for="item in allPlatform"
-             :key="item"
-             :label="item"
-             :value="item">
-         </el-option>
-       </el-select>
+     <div class="top-up-panel">
+       <div class="coin-panel">
+         <span>Select coin: </span>
+         <el-select v-model="selectedCoin" placeholder="Coin" @change="getAddress" style="width: 100%; padding-top: 10px">
+           <el-option
+               v-for="item in allCurrency"
+               :key="item.id"
+               :label="item.currencyName"
+               :value="item.currencyName">
+           </el-option>
+         </el-select>
+       </div>
+       <div class="platform-panel">
+         <span>Deposit to: </span>
+         <el-select v-model="selectedPlatform" placeholder="Network" @change="getAddress" style="width: 100%; padding-top: 10px">
+           <el-option
+               v-for="item in allPlatform"
+               :key="item"
+               :label="item"
+               :value="item">
+           </el-option>
+         </el-select>
+       </div>
+       <div class="key-area" v-loading="loading">
+         <el-button v-if="getAddressBtnShow" :disabled="selectedPlatform===''||selectedCoin===''" class="get-address-btn" type="warning" @click="getAddress">Get Address</el-button>
+         <div v-if="!getAddressBtnShow">
+           {{ this.$store.getters.userid }}
+           <span style="padding-left: 10px">
+             <el-popover
+                 placement="top-start"
+                 title="hint"
+                 width="310"
+                 trigger="hover"
+                 content="This is an address which is used to transfer the currency from other platform to your SheepCoin account">
+               <i class="el-icon-question" slot="reference"></i>
+             </el-popover>
+           </span>
+         </div>
+       </div>
      </div>
      <span slot="footer" class="dialog-footer">
-    <el-button @click="topUpDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="topUpDialogVisible = false">确 定</el-button>
+    <el-button @click="topUpDialogVisible = false">Cancel</el-button>
+    <el-button type="primary" @click="topUpDialogVisible = false">Confirm</el-button>
   </span>
    </el-dialog>
  </div>
@@ -81,17 +115,23 @@
 <script>
 
 import {getWalletList} from "@/api/account";
+import {deepClone} from "@/utils/usefulTools";
+import {getAllCurrency} from "@/api/simpleTrade";
 
 export default {
   name: "wallet",
   data() {
     return {
       topUpDialogVisible: false,
+      getAddressBtnShow: true,
+      loading: false,
       asset: 0.00,
       walletCurrencyStatus: [],//拼接前
       userWalletList: [],//拼接后
       selectedCoin: '',
+      selectedPlatform: '',
       amount: '',
+      total: 0,
       allCurrency: [],
       allPlatform: ['BTC','ETH','BNB']
     }
@@ -103,27 +143,50 @@ export default {
     if(this.walletCurrencyStatus.length !== 0) this.$socketApi.closeWebSocket();
   },
   methods: {
-    handleTopUp() {
-
+    getAddress() {
+      if(this.selectedPlatform!=='' && this.selectedCoin!=='') {
+        this.getAddressBtnShow = true
+        this.loading = true
+        setTimeout(()=>{
+          this.loading = false
+          this.getAddressBtnShow = false
+        }, 1000)
+      }
+    },
+    async handleTopUp() {
+      this.selectedCoin = ''
+      this.selectedPlatform = ''
+      this.topUpDialogVisible = true
+      let res = await getAllCurrency()
+      this.allCurrency = res.data
     },
     jointWalletList(data) {
+      console.log(data)
       let currentPrice = data.currentPrice
-      let priceChange24h = data.priceChange24h
+      let priceChangePercentage24h = data.priceChangePercentage24h
       let symbol = data.symbol
-      this.userWalletList = this.walletCurrencyStatus.map(item=>{
-        if(item.currencySymbol === symbol) {
-          item.price = currentPrice
-          item.change = priceChange24h
+      let high24h = data.high24h
+      let low24h = data.low24h
+      let name = data.name
+      let arr = deepClone(this.walletCurrencyStatus)
+      for (let i=0; i<arr.length; i++) {
+        if(arr[i].currencySymbol === symbol) {
+          arr[i].price = currentPrice
+          arr[i].change = priceChangePercentage24h
+          arr[i].high24h = high24h
+          arr[i].low24h = low24h
+          arr[i].name = name
         }
-        this.asset += item.currentPrice * item.amount || 0
-      })
-      console.log(this.userWalletList)
+        this.asset += arr[i].price * arr[i].amount || 0
+      }
+      this.userWalletList = arr
     },
     async getWalletList() {
       let res = await getWalletList('10/1 ')
       this.walletCurrencyStatus = res.data.records
+      this.total = res.data.total
       this.walletCurrencyStatus.forEach(item=>{
-        this.$socketApi.initWebSocket( '/ws/sid/' + item, this.jointWalletList);
+        this.$socketApi.initWebSocket( '/ws/sid/' + item.currencySymbol, this.jointWalletList);
       })
     }
   }
@@ -152,6 +215,37 @@ export default {
   margin-top: 20px;
   margin-bottom: 10px;
 }
-.table-container {
+.increase {
+  color: red;
 }
+.decrease {
+  color: green;
+}
+.table-font{
+  font-size: 17px; font-weight: bold
+}
+.top-up-panel {
+  height: 35vh;
+}
+.coin-panel {
+  padding-bottom: 30px;
+}
+.platform-panel {
+  padding-bottom: 30px;
+}
+.key-area {
+  width: 100%;
+  height: 40%;
+  background: #f1f1f1;
+  border: 1px #a9a9a9 solid;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.el-icon-question {
+  cursor: pointer;
+
+}
+
 </style>

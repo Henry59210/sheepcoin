@@ -1,6 +1,6 @@
 <template>
   <div class="buy-operate-container">
-    <el-form :inline="true" :model="buyForm" ref="buyForm" :rules="rule" class="demo-form-inline">
+    <el-form :inline="true" :model="buyForm" ref="buyForm" class="demo-form-inline">
       <div class="enter-amount">
         <div class="text-hint">I want to pay</div>
         <el-form-item class="input-container" prop="fiat">
@@ -42,7 +42,6 @@
 
 <script>
 
-
 export default {
   name: "buy",
   data() {
@@ -57,15 +56,7 @@ export default {
       curCurrencyStatus: {
         curCurrencyPrice: '',
         curCurrencyType: ''
-      },
-      rule: {
-        fiat: [
-          { type: 'number', message: 'Fiat must be number!'}
-        ],
-        currency: [
-          { type: 'number', message: 'Fiat must be number!'}
-        ],
-      },
+      }
     }
   },
   mounted(){

@@ -1,43 +1,42 @@
 <template>
-  <div class="buy-operate-container">
-    <el-form :inline="true" :model="sellForm" ref="sellForm" class="demo-form-inline">
+  <div class="sell-operate-container">
+    <el-form :inline="true" :model="sellForm" :rules="rule" ref="sellForm" class="demo-form-inline">
       <div class="enter-amount">
         <div class="text-hint">I will sell</div>
-        <el-form-item class="input-container" :rules="currencyRule">
+        <el-form-item class="input-container" prop="currencyAmount">
           <el-input v-model="sellForm.currencyAmount" placeholder="Enter Amount" :disabled="sellForm.currencyType===''"  @input="inputCurrency"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="sellForm.currencyType" filterable placeholder="Currency" @change="selectCurrency">
             <el-option
-                v-for="item in currencyInfo"
+                v-for="item in allCurrency"
                 :key="item.currencySymbol"
-                :label="item.currencySymbol"
+                :label="item.currencyName"
                 :value="item.currencySymbol">
             </el-option>
           </el-select>
         </el-form-item>
       </div>
       <div class="enter-amount">
-        <div class="text-hint">I want to pay</div>
-        <el-form-item :rules="fiatRule" class="input-container" >
+        <div class="text-hint">you will receive</div>
+        <el-form-item class="input-container" prop="fiatRule">
           <el-input  v-model="sellForm.fiatAmount" placeholder="Enter Amount" :disabled="sellForm.fiatType===''" @input="inputFiat"></el-input>
         </el-form-item>
         <el-form-item class="select-container">
           <el-select v-model="sellForm.fiatType" filterable placeholder="Fiat" @change="selectFiat">
             <el-option
-                v-for="item in fiatInfo"
-                :key="item.fiatName"
-                :label="item.fiatName"
-                :value="item.fiatName">
+                v-for="item in allFiat"
+                :key="item.fiatSymbol"
+                :label="item.fiatSymbol"
+                :value="item.fiatSymbol">
             </el-option>
           </el-select>
         </el-form-item>
       </div>
     </el-form>
     <div style="padding: 10%">
-      <el-button type="primary" style="width: 100%" @click="submitForm('sellForm')">buy</el-button>
+      <el-button type="primary" style="width: 100%" @click="submitForm('sellForm')">sell</el-button>
     </div>
-    <el-button @click="test">aaa</el-button>
   </div>
 </template>
 
@@ -51,112 +50,84 @@ export default {
   // components: {PayFromFiat},
   data() {
     var checkCurrencyAmount = (rule, value, callback) => {
-          if (value < 18) {
-            callback(new Error('必须年满18岁'));
-          } else {
-            callback();
-          }
+      let reg = /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g;
+      if (value > this.selectedCurrencyAmount) {
+        callback(new Error('Insufficient balance, please top up your Wallet.'));
+      } else if (!reg.test(value)) {
+        callback(new Error('Must be number'));
+      } else {
+        callback();
+      }
     };
     return {
       paymentDialogVisible: false,
-      accountInfo: {},
       sellForm: {
         fiatAmount: '',
         fiatType: '',
         currencyType: '',
         currencyAmount: '',
       },
-      fiatRate: 7,
+      aaa: 0,
+      fiatRate: 0,
+      selectedCurrencyAmount: 10,
       curCurrencyStatus: {
-        curCurrencyPrice: '10',
-        curCurrencyType: 'btc'
+        curCurrencyPrice: '',
+        curCurrencyType: ''
       },
-      currencyRule: [
-        { required: true, message: 'Amount cannot less 0!'},
-        { type: 'number', message: 'Currency must be number!'},
-        { validator: checkCurrencyAmount, trigger: 'blur'}
-      ],
-      fiatRule: [
-        { required: true, message: 'Amount cannot less 0!'},
-        { type: 'number', message: 'Currency must be number!'},
-      ],
-      currencyInfo: [
-        {
-          id: 1,
-          currencySymbol: 'btc',
-          currencyImg: 'link',
-          currentPrice: 100
-        }, {
-          id: 2,
-          currencySymbol: 'ift',
-          currencyImg: 'link',
-          currentPrice: 1000
-        }, {
-          id: 3,
-          currencySymbol: 'BOC',
-          currencyImg: 'link',
-          currentPrice: 1000
-        }, {
-          id: 4,
-          currencySymbol: 'BAN',
-          currencyImg: 'link',
-          currentPrice: 100
-        }, {
-          id: 5,
-          currencySymbol: 'CTT',
-          currencyImg: 'link',
-          currentPrice: 100
-        },
-      ],
-      fiatInfo: [
-        {
-          fiatName: 'USD',
-          fiatImg: 'link',
-          fiatRate: 1
-        },{
-          fiatName: 'RMB',
-          fiatImg: 'link',
-          fiatRate: 7.1
-        },{
-          fiatName: 'SGD',
-          fiatImg: 'link',
-          fiatRate: 1.2
-        },{
-          fiatName: 'YEN',
-          fiatImg: 'link',
-          fiatRate: 20
-        }],
-      allCurrency: [],
-      allFiat: []
+      rule: {
+        currencyAmount: [
+          { validator: checkCurrencyAmount, trigger: 'blur'}
+        ],
+        fiatRule: [
+          { type: 'number', message: 'Currency must be number!'},
+        ],
+      },
     }
   },
   mounted(){
-    this.allCurrency = this.$store.getters.allCurrency
-    this.allFiat = this.$store.getters.allFiat
     // 建立socket连接， 并设置socket信息返回接受函数
     this.$socketApi.initWebSocket( '/ws/sid/btc', this.setCurrentCurrency);
   },
   beforeDestroy(){
     this.$socketApi.closeWebSocket();
   },
+  watch: {
+    'curCurrencyStatus.curCurrencyPrice': {
+      handler(val, oldval) {
+        console.log(val)
+        if(val !== oldval  && this.sellForm.currencyAmount) {
+          this.inputCurrency()
+        }
+      },
+      deep: true
+    }
+  },
+  computed: {
+    allCurrency() {
+      return this.$store.getters.allCurrency
+    },
+    allFiat() {
+      return this.$store.getters.allFiat
+    }
+  },
   methods: {
     setCurrentCurrency(data) {
-      this.curCurrencyStatus.curCurrencyPrice = 10 || data.currentPrice
-      this.curCurrencyStatus.curCurrencyType = 'btc' || data.symbol
+      this.curCurrencyStatus.curCurrencyPrice = data.currentPrice
+      this.curCurrencyStatus.curCurrencyType = data.symbol
     },
     websocketSend(data) {
       this.$socketApi.sendSock(data);
     },
     inputFiat() {
-      this.sellForm.currencyAmount = this.sellForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate || 0
+      this.sellForm.currencyAmount = (this.sellForm.fiatAmount/this.curCurrencyStatus.curCurrencyPrice/this.fiatRate).toFixed(4) || 0
     },
     selectFiat() {
-      this.fiatRate = this.fiatInfo.filter(item=>{
-        return item.fiatName === this.sellForm.fiatType
-      })[0].fiatRate
+      this.fiatRate = this.allFiat.filter(item=>{
+        return item.fiatSymbol === this.sellForm.fiatType
+      })[0].usdexRate
     },
     inputCurrency() {
-      this.sellForm.fiatAmount = this.sellForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate || 0
+      this.sellForm.fiatAmount = (this.sellForm.currencyAmount * this.curCurrencyStatus.curCurrencyPrice * this.fiatRate).toFixed(2) || 0
     },
     async selectCurrency() {
       let loading = this.$loading({
@@ -167,20 +138,19 @@ export default {
       });
       this.websocketSend(this.sellForm.currencyType)
       let waitStatus = setInterval(()=>{
-        console.log(this.sellForm.currencyType +'---'+ this.curCurrencyStatus.curCurrencyType)
         if(this.sellForm.currencyType === this.curCurrencyStatus.curCurrencyType) {
           loading.close()
           clearInterval(waitStatus)
         }
       }, 500)
-      let res  = await getCurrencyAmount()
-      this.accountInfo = res
+      let res  = await getCurrencyAmount(this.sellForm.currencyType)
+      this.selectedCurrencyAmount = res.data.amount.toFixed(4)
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$store.commit('trade/SET_BUYFORM', this.sellForm)
-          this.paymentDialogVisible = true
+          this.$store.commit('trade/SET_SELLFORM', this.sellForm)
+          this.$store.commit('trade/SET_CURRENCYDIALOG', true)
         } else {
           console.log('error submit!!');
           return false;
@@ -202,7 +172,7 @@ export default {
 </script>
 
 <style scoped>
-.buy-operate-container {
+.sell-operate-container {
   text-align: center;
 }
 .enter-amount {

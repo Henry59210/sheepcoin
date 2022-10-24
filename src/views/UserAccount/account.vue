@@ -12,7 +12,7 @@
       </el-menu>
     </div>
     <div class="content-container">
-      <div class="user-info">{{ username }}</div>
+      <div class="user-info"><span style="font-size: 40px; margin-right: 10px"><i class="el-icon-user-solid"></i></span>{{ username }}</div>
       <div class="view-card"><el-button @click="viewCard">View Card</el-button></div>
       <div class="user-option-content">
         <router-view></router-view>

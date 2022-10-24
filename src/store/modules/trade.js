@@ -3,9 +3,11 @@ import {getAllCurrency, getAllFiat} from "@/api/simpleTrade";
 const getDefaultState = () => {
     return {
         fiatPaymentDialogVisible: false,
+        currencySellDialogVisible: false,
         allCurrency: [],
         allFiat: [],
-        buyForm: {}
+        buyForm: {},
+        sellForm: {}
     }
 }
 const state = getDefaultState()
@@ -25,7 +27,13 @@ const mutations = {
     },
     SET_FIATDIALOG: (state, status) => {
         state.fiatPaymentDialogVisible = status
-    }
+    },
+    SET_SELLFORM:  (state, status) => {
+        state.sellForm = status
+    },
+    SET_CURRENCYDIALOG: (state, status) => {
+        state.currencySellDialogVisible = status
+    },
 }
 
 const actions = {
