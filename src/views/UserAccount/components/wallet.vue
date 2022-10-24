@@ -55,6 +55,8 @@
        <el-pagination
            layout="prev, pager, next"
            :total="total"
+           :hide-on-single-page="true"
+           @current-change="handleCurrentChange"
            :page-size="10">
        </el-pagination>
      </div>
@@ -181,13 +183,17 @@ export default {
       }
       this.userWalletList = arr
     },
-    async getWalletList() {
-      let res = await getWalletList('10/1 ')
+    async getWalletList(val) {
+      let page = val || 1
+      let res = await getWalletList('10/'+page)
       this.walletCurrencyStatus = res.data.records
       this.total = res.data.total
       this.walletCurrencyStatus.forEach(item=>{
         this.$socketApi.initWebSocket( '/ws/sid/' + item.currencySymbol, this.jointWalletList);
       })
+    },
+    handleCurrentChange(val) {
+      this.getWalletList(val)
     }
   }
 }

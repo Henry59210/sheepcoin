@@ -39,6 +39,7 @@ export function drawCurrency(data) {
         data: data
     })
 }
+
 export function getIcon(param) {
     return request({
         url: '/sheepservice/v1/currency/icon/' + param,
@@ -46,3 +47,44 @@ export function getIcon(param) {
         param
     })
 }
+//-----express----
+export function purchaseCurrency(data) {
+    return request({
+        url: '/sheepservice/v1/transaction/order/express/purchase',
+        method: 'post',
+        data: data
+    })
+}
+
+export function sellCurrency(data) {
+    return request({
+        url: '/sheepservice/v1/transaction/order/express/sell',
+        method: 'post',
+        data: data
+    })
+}
+//------p2p--------
+export function getOrderList(param) {
+    return request({
+        url: '/sheepservice/v1/transaction/item/list/10/' + param,
+        method: 'get',
+        param
+    })
+}
+
+export function p2pSellCurrency(data) {
+    return request({
+        url: '/sheepservice/v1/transaction/item',
+        method: 'post',
+        data: data
+    })
+}
+
+export function p2pPurchaseCurrency(data) {
+    return request({
+        url: '/sheepservice/v1/transaction/order',
+        method: 'post',
+        data: data
+    })
+}
+

@@ -6,6 +6,8 @@ const getters = {
     sellForm: state => state.trade.sellForm,
     allCurrency: state => state.trade.allCurrency,
     allFiat: state => state.trade.allFiat,
+    sellType: state => state.trade.sellType,
+    buyType: state => state.trade.buyType,
     fiatPaymentDialogVisible: state => state.fiatPaymentDialogVisible,
     currencySellDialogVisible: state => state.currencySellDialogVisible
 }

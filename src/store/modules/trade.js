@@ -7,7 +7,9 @@ const getDefaultState = () => {
         allCurrency: [],
         allFiat: [],
         buyForm: {},
-        sellForm: {}
+        sellForm: {},
+        sellType: '',// p2p/express
+        buyType: ''
     }
 }
 const state = getDefaultState()
@@ -31,8 +33,14 @@ const mutations = {
     SET_SELLFORM:  (state, status) => {
         state.sellForm = status
     },
-    SET_CURRENCYDIALOG: (state, status) => {
+    SET_CURRENTCYDIALOG: (state, status) => {
         state.currencySellDialogVisible = status
+    },
+    SET_SELLTYPE: (state, status) => {
+        state.sellType = status
+    },
+    SET_BUYTYPE: (state, status) => {
+        state.buyType = status
     },
 }
 

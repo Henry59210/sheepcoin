@@ -32,6 +32,7 @@
         title="Sell"
         :visible.sync="currencySellDialogVisible"
         width="40%"
+        @close="close"
         center>
       <div class="dialog-content-container">
         <pay-from-currency ref="payFromCurrency" :finalForm="sellForm"></pay-from-currency>
@@ -47,8 +48,7 @@
 <script>
 
 import PayFromFiat from "@/components/payFromFiat";
-import {topUp} from "@/api/account";
-import {drawCurrency} from "@/api/simpleTrade";
+import {p2pPurchaseCurrency, p2pSellCurrency, purchaseCurrency, sellCurrency} from "@/api/simpleTrade";
 import PayFromCurrency from "@/components/payFromcurrency";
 
 export default {
@@ -111,12 +111,29 @@ export default {
       if ( this.$refs.payFromFiat.isChooseCard ) {
         if( !this.$refs.payFromFiat.isSuccess ){
           this.$refs.payFromFiat.loading = true
-          let topUpData = {
-            userId: this.$store.getters.userid,
-            amount: parseFloat(this.buyForm.currencyAmount),
-            currencySymbol:  this.buyForm.currencyType
+          let that = this
+          let buy = function() {
+            let buyData
+            if(that.$store.getters.buyType === 'express') {
+              buyData = {
+                amount: that.buyForm.currencyAmount,
+                currencySymbol: that.buyForm.currencyType,
+                price: that.buyForm.fiatAmount,
+                fiatType: that.buyForm.fiatType
+              }
+              return purchaseCurrency(buyData)
+            }
+            if(that.$store.getters.buyType === 'p2p') {
+              buyData = {
+                sellerId: that.$store.getters.userid,
+                amount: that.buyForm.currencyAmount,
+                currencySymbol: that.buyForm.currencyType,
+                price: that.buyForm.fiatAmount
+              }
+              return p2pPurchaseCurrency(buyData)
+            }
           }
-          await topUp(topUpData).then(()=>{
+          await buy().then(()=>{
             setTimeout(()=>{
               this.$refs.payFromFiat.loading = false
               this.$refs.payFromFiat.isSuccess = true
@@ -137,11 +154,30 @@ export default {
     async confirmSell() {
       if( !this.$refs.payFromCurrency.isSuccess ){
         this.$refs.payFromCurrency.loading = true
-        let drawData = {
-          amount: this.sellForm.currencyAmount,
-          currencySymbol: this.sellForm.currencyType
+        let that = this
+        let sell = function() {
+          let sellData
+          if(that.$store.getters.sellType === 'express') {
+            sellData = {
+              amount: that.sellForm.currencyAmount,
+              currencySymbol: that.sellForm.currencyType,
+              price: that.sellForm.fiatAmount,
+              fiatType: that.sellForm.fiatType
+            }
+            return sellCurrency(sellData)
+          }
+          if(that.$store.getters.sellType === 'p2p') {
+            sellData = {
+              sellerId: that.$store.getters.userid,
+              amount: that.sellForm.currencyAmount,
+              currencySymbol: that.sellForm.currencyType,
+              price: that.sellForm.fiatAmount
+            }
+            return p2pSellCurrency(sellData)
+          }
         }
-        await drawCurrency(drawData).then(()=>{
+        await sell().then(()=>{
+          this.$refs.payFromCurrency.getBalance()
           setTimeout(()=>{
             this.$refs.payFromCurrency.loading = false
             this.$refs.payFromCurrency.isSuccess = true
@@ -155,6 +191,11 @@ export default {
         this.$refs.payFromCurrency.isSuccess = false
         this.canNotCancel = false
       }
+    },
+    close() {
+      this.$store.state.trade.currencySellDialogVisible = false
+      this.$refs.payFromCurrency.isSuccess = false
+      this.canNotCancel = false
     },
     cancelPayment() {
       this.fiatPaymentDialogVisible = false

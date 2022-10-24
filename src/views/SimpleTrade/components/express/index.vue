@@ -23,8 +23,6 @@ export default {
   name: "express",
   data () {
     return {
-      allCurrency: [],
-      allFiat: []
     }
   },
   created() {

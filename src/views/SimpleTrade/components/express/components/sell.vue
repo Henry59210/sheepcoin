@@ -67,9 +67,8 @@ export default {
         currencyType: '',
         currencyAmount: '',
       },
-      aaa: 0,
       fiatRate: 0,
-      selectedCurrencyAmount: 10,
+      selectedCurrencyAmount: 0,
       curCurrencyStatus: {
         curCurrencyPrice: '',
         curCurrencyType: ''
@@ -149,23 +148,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.$store.commit('trade/SET_SELLTYPE', 'express')
           this.$store.commit('trade/SET_SELLFORM', this.sellForm)
-          this.$store.commit('trade/SET_CURRENCYDIALOG', true)
+          this.$store.commit('trade/SET_CURRENTCYDIALOG', true)
         } else {
           console.log('error submit!!');
           return false;
         }
       });
-    },
-    test() {
-      this.sellForm = {
-        fiatAmount: 20,
-        fiatType: 'USD',
-        currencyType: 'btc',
-        currencyAmount: 10,
-      },
-          this.$store.commit('trade/SET_BUYFORM', this.sellForm)
-      this.$store.commit('trade/SET_FIATDIALOG', true)
     }
   }
 }

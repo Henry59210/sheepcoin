@@ -54,6 +54,12 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+          :hide-on-single-page="true"
+          :total="total"
+          @current-change="handleCurrentChange"
+          layout="prev, pager, next">
+      </el-pagination>
     </div>
     <currency-detail v-if="visible" :visible="visible" :currencyDetail="currencyDetail" @close="closeDialog"></currency-detail>
   </div>
@@ -68,7 +74,8 @@ export default {
     return {
       visible: false,
       allCurrency: [],
-      currencyDetail: {}
+      currencyDetail: {},
+      total: 0
     }
   },
   mounted() {
@@ -85,12 +92,13 @@ export default {
     closeDialog() {
       this.visible = false
     },
-    handleTopUp() {
-
+    handleCurrentChange(val) {
+      this.$socketApi.closeWebSocket();
+      this.$socketApi.initWebSocket( '/ws/sid/'+val, this.initCurrency);
     },
     initCurrency(data) {
       this.allCurrency = data.records
-      console.log(this.allCurrency);
+      this.total = data.total
     }
   },
 }

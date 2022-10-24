@@ -18,20 +18,19 @@
           <img class="bd-placeholder-img rounded-circle" width="300" height="300" x="50%" y="50%" dy=".3em" src="../../assets/img/home/Topping_up.svg" alt=""/>
           <h2 class="fw-normal">Topping up your account</h2>
           <p>Top up your cryptocurrency account to open cryptocurrency trading. </p>
-          <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div> <!-- col-lg-4 -->
         <div class="col-lg-4">
           <img class="bd-placeholder-img rounded-circle" width="300" height="300" x="50%" y="50%" dy=".3em" src="../../assets/img/home/Complete_authentication.svg" alt=""/>
           <h2 class="fw-normal">Complete authentication</h2>
           <p>Complete identity verification to ensure the security of personal accounts and transactions.</p>
-          <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
           </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
           <img class="bd-placeholder-img rounded-circle" width="300" height="300" x="50%" y="50%" dy=".3em" src="../../assets/img/home/Start_trading.svg" alt=""/>
           <h2 class="fw-normal">Start trading</h2>
           <p>And lastly this, the third column of representative placeholder content.</p>
-          <p><a class="btn btn-secondary" href="#">View details &raquo;</a></p>
         </div><!-- /.col-lg-4 -->
+
+         <div style="text-align: center; padding: 20px"><el-button type="success" class="explore-button" @click="turnToSimpleTrade">Start Explore</el-button></div>
        </div>
 
   </div><!-- END THE CONTERTAINr -->
@@ -48,8 +47,8 @@
         <p class="lead">Some great placeholder content for the first featurette here. Imagine some exciting prose here.</p>
         <div class="col-md-7" >
           <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">     
-        </div> 
+          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+        </div>
       </div>
       <div class="col-md-5">
         <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="../../assets/img/home/01.svg" alt="" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -64,9 +63,9 @@
         <p class="lead">Multi-factor encryption means, 7 days and 24 hours a day platform monitoring, all-round protection of user asset security.</p>
         <div class="col-md-7 order-md-2" >
           <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">     
-        </div>    
-        
+          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+        </div>
+
       </div>
       <div class="col-md-5 order-md-1">
         <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="../../assets/img/home/02.svg" alt="" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -81,8 +80,8 @@
         <p class="lead">Localized transaction service centers have been set up in many countries and regions around the world to create a blockchain ecosystem integrating multiple business forms.</p>
         <div class="col-md-7 " >
           <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">     
-        </div> 
+          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+        </div>
       </div>
       <div class="col-md-5">
         <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="../../assets/img/home/03.svg" alt="" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -97,8 +96,8 @@
         <p class="lead">Browse real-time Huobi data anytime and anywhere, and trade with simple operation. Freedom to buy and sell. Safe and reliable, simple operation.</p>
         <div class="col-md-7 order-md-2" >
           <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">     
-        </div> 
+          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+        </div>
       </div>
       <div class="col-md-5 order-md-1">
         <img class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" src="../../assets/img/home/04.svg" alt="" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false">
@@ -119,10 +118,10 @@
 
 
 
-  
- 
 
-     
+
+
+
     </body>
   </html>
 
@@ -157,6 +156,9 @@
     },
     methods:{
       //设置走马灯高度
+      turnToSimpleTrade() {
+        this.$router.push('/simpleTrade')
+      },
       setBannerH() {
           this.bannerH = document.body.clientWidth / 4
       },
@@ -184,7 +186,7 @@
 }
 
 body {
-    
+
     padding-bottom: 3rem;
     color: #5a5a5a;
     margin: 0;
@@ -256,7 +258,7 @@ body {
 
 
 
-  
+
 .row {
     --bs-gutter-x: 1.5rem;
     --bs-gutter-y: 0;
@@ -347,6 +349,11 @@ p {
     margin-bottom: 1rem;
 }
 
+.explore-button {
+  display: inline-block;
+  height:50px;
+  width: 200px
+}
 
 .btn {
     --bs-btn-padding-x: 0.75rem;
@@ -489,7 +496,7 @@ a {
   margin-top: 3rem;
   margin-left: 1.5rem;
   float: left;
-  
+
 }
 
 .small_icon_right {

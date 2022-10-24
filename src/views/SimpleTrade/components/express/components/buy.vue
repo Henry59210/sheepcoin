@@ -122,6 +122,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.$store.commit('trade/SET_BUYTYPE', 'express')
           this.$store.commit('trade/SET_BUYFORM', this.buyForm)
           this.$store.commit('trade/SET_FIATDIALOG', true)
         } else {
