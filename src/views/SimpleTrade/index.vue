@@ -116,9 +116,9 @@ export default {
             let buyData
             if(that.$store.getters.buyType === 'express') {
               buyData = {
-                amount: that.buyForm.currencyAmount,
+                amount: Number(that.buyForm.currencyAmount),
                 currencySymbol: that.buyForm.currencyType,
-                price: that.buyForm.fiatAmount,
+                price: Number(that.buyForm.fiatAmount),
                 fiatType: that.buyForm.fiatType
               }
               return purchaseCurrency(buyData)
@@ -126,9 +126,9 @@ export default {
             if(that.$store.getters.buyType === 'p2p') {
               buyData = {
                 sellerId: that.$store.getters.userid,
-                amount: that.buyForm.currencyAmount,
+                amount: Number(that.buyForm.currencyAmount),
                 currencySymbol: that.buyForm.currencyType,
-                price: that.buyForm.fiatAmount
+                price: Number(that.buyForm.fiatAmount)
               }
               return p2pPurchaseCurrency(buyData)
             }
@@ -159,9 +159,9 @@ export default {
           let sellData
           if(that.$store.getters.sellType === 'express') {
             sellData = {
-              amount: that.sellForm.currencyAmount,
+              amount: Number(that.sellForm.currencyAmount),
               currencySymbol: that.sellForm.currencyType,
-              price: that.sellForm.fiatAmount,
+              price: Number(that.sellForm.fiatAmount),
               fiatType: that.sellForm.fiatType
             }
             return sellCurrency(sellData)
@@ -169,9 +169,9 @@ export default {
           if(that.$store.getters.sellType === 'p2p') {
             sellData = {
               sellerId: that.$store.getters.userid,
-              amount: that.sellForm.currencyAmount,
+              amount: Number(that.sellForm.currencyAmount),
               currencySymbol: that.sellForm.currencyType,
-              price: that.sellForm.fiatAmount
+              price: Number(that.sellForm.fiatAmount)
             }
             return p2pSellCurrency(sellData)
           }

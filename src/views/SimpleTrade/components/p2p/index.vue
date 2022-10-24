@@ -32,7 +32,7 @@
         <el-table-column
             label="Currency Type">
           <template slot-scope="scope">
-            <span>{{ scope.row.currencySymbol.toUpperCase() }}</span>
+            <span>{{ scope.row.currencySymbol ? scope.row.currencySymbol.toUpperCase() : 'wrong' }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -61,14 +61,6 @@
         </el-pagination>
       </div>
     </div>
-<!-----------buy---------->
-    <el-dialog
-        title="Sell"
-        :visible.sync="sellDialogVision"
-        width="45%"
-        center>
-
-    </el-dialog>
 <!----------sell----------->
     <el-dialog
         title="Sell"
@@ -98,7 +90,7 @@
             <div class="enter-amount">
               <div class="text-hint">you will receive</div>
               <el-form-item class="input-container" prop="fiatRule">
-                <el-input  v-model="sellForm.fiatAmount" placeholder="Enter Amount" :disabled="sellForm.currencyType===''"></el-input>
+                <el-input v-model="sellForm.fiatAmount" placeholder="Enter Amount" :disabled="sellForm.currencyType===''"></el-input>
               </el-form-item>
               <el-form-item class="select-container">
                 <el-select v-model="sellForm.fiatType" :disabled="true" filterable placeholder="Fiat"></el-select>
@@ -157,6 +149,7 @@ export default {
         ],
         fiatRule: [
           { type: 'number', message: 'Currency must be number!'},
+          { required: true, message: 'Don\'t forget enter money!', trigger: 'blur'}
         ],
       },
       //----buyForm-----
@@ -168,7 +161,19 @@ export default {
       },
     }
   },
+  watch: {
+    fiatPaymentDialogVisible: {
+      handler(val){
+        if(!val) {
+          this.getItemList(this.currentPage)
+        }
+      }
+    }
+  },
   computed: {
+    fiatPaymentDialogVisible() {
+      return this.$store.state.trade.fiatPaymentDialogVisible
+    },
     userId() {
       return this.$store.getters.userid
     },

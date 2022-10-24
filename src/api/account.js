@@ -30,3 +30,16 @@ export function addCard(data) {
         data: data
     })
 }
+
+export function getBuyOrder(param) {
+    return request({
+        url: 'sheepservice/v1/transaction/order/buyer-order/10/' + param,
+        method: 'get',
+    })
+}
+export function getSellOrder(param) {
+    return request({
+        url: 'sheepservice/v1/transaction/order/seller-order/10/' + param,
+        method: 'get',
+    })
+}

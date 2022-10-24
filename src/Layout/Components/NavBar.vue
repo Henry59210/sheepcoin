@@ -50,7 +50,7 @@ export default {
       return result
     },
     username() {
-      return 'admin1'
+      return this.$store.getters.username
     }
   },
   methods: {
