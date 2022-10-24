@@ -4,7 +4,7 @@ import store from "@/store/index"
 import {Message, MessageBox} from "element-ui";
 
 const service = axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
+    baseURL: '/api/v1',
     timeout:5000,
 })
 
@@ -50,7 +50,7 @@ service.interceptors.response.use(
             })
 
             // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-            if (res.code === 'F001' || res.code === 'F002' || res.code === 'F003') {
+            if (res.code === 'F001' || res.code === 'F002' || res.code === '403') {
                 // to re-login
                 MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
                     confirmButtonText: 'Re-Login',

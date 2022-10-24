@@ -1,5 +1,5 @@
 <template>
-  <div class="p2p">p2p</div>
+  <div>p2p</div>
 </template>
 
 <script>
@@ -9,5 +9,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

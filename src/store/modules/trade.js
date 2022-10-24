@@ -1,9 +1,13 @@
-import {geyAllCurrency, geyAllFiat} from "@/api/simpleTrade";
+import {getAllCurrency, getAllFiat} from "@/api/simpleTrade";
 
 const getDefaultState = () => {
     return {
+        fiatPaymentDialogVisible: false,
+        currencySellDialogVisible: false,
         allCurrency: [],
-        allFiat: []
+        allFiat: [],
+        buyForm: {},
+        sellForm: {}
     }
 }
 const state = getDefaultState()
@@ -17,14 +21,26 @@ const mutations = {
     },
     SET_ALLFIAT: (state, allFiat) => {
         state.allFiat = allFiat
-    }
+    },
+    SET_BUYFORM:  (state, status) => {
+        state.buyForm = status
+    },
+    SET_FIATDIALOG: (state, status) => {
+        state.fiatPaymentDialogVisible = status
+    },
+    SET_SELLFORM:  (state, status) => {
+        state.sellForm = status
+    },
+    SET_CURRENCYDIALOG: (state, status) => {
+        state.currencySellDialogVisible = status
+    },
 }
 
 const actions = {
     getAllCurrency({ commit }) {
         return new Promise((resolve, reject) => {
-            geyAllCurrency().then(response => {
-                commit('SET_AllCURRENCY', response)
+            getAllCurrency().then(response => {
+                commit('SET_AllCURRENCY', response.data)
                 resolve()
             }).catch(error => {
                 reject(error)
@@ -33,9 +49,8 @@ const actions = {
     },
     getAllFiat({ commit }) {
         return new Promise((resolve, reject) => {
-            geyAllFiat().then(response => {
-                const { record } = response
-                commit('SET_ALLFIAT', record)
+            getAllFiat().then(response => {
+                commit('SET_ALLFIAT', response.data.records)
                 resolve()
             }).catch(error => {
                 reject(error)

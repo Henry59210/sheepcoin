@@ -56,9 +56,7 @@ export default {
   methods: {
     handleCommand(command) {
       switch (command) {
-        case 'Overview': this.$router.push('/account/overview'); break;
-        case 'Order': this.$router.push('/account/order'); break;
-        case 'Wallet': this.$router.push('/account/wallet'); break;
+        case 'Account': this.$router.push('/account'); break;
       }
     }
   }
