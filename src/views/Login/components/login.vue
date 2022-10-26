@@ -72,7 +72,8 @@ export default {
         if (valid) {
           this.loading = true
           await this.$store.dispatch('user/login', this.loginForm)
-          await this.$router.push({path: this.redirect || '/'})
+          await this.$router.push({path: this.redirect!=='/login' ? this.redirect : '/'})
+          console.log(this.redirect)
           this.loading = false
         } else {
           alert('error format!!');

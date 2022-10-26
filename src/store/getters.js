@@ -1,7 +1,10 @@
+
 const getters = {
     token: state => state.user.token,
     userid: state => state.user.userid,
     username: state => state.user.username,
+    roles: state => state.user.roles,
+    permission_routes: state => state.permission.routes,
     buyForm: state => state.trade.buyForm,
     sellForm: state => state.trade.sellForm,
     allCurrency: state => state.trade.allCurrency,

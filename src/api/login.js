@@ -26,7 +26,7 @@ export function getInfo(params) {
 
 export function logout() {
     return request({
-        url: '/vue-admin-template/user/logout',
-        method: 'post'
+        url: '/authservice/v1/logout',
+        method: 'get'
     })
 }

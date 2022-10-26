@@ -43,3 +43,10 @@ export function getSellOrder(param) {
         method: 'get',
     })
 }
+
+export function getUserCredit(param) {
+    return request({
+        url: 'sheepservice/v1/userInfo/' + param,
+        method: 'get',
+    })
+}

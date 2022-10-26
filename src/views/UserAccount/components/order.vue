@@ -123,7 +123,14 @@ export default {
       ]
     }
   },
+  beforeUpdate() {
+    localStorage.setItem('currentPage', this.currentPage)
+  },
+  beforeDestroy() {
+    localStorage.setItem('currentPage', 1 )
+  },
   created() {
+    this.currentPage = Number(localStorage.getItem('currentPage')) || 1
     this.changeOrder()
   },
   computed: {

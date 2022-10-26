@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/auth/login', '/auth/register'] // no redirect whitelist
+const whiteList = ['/auth/login', '/auth/register', '/home/index', '/BTC/platform'] // no redirect whitelist
 
 router.beforeEach(async(to, from, next) => {
     // start progress bar
@@ -32,13 +32,23 @@ router.beforeEach(async(to, from, next) => {
             } else {
                 try {
                     // get user info
+                    // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
                     await store.dispatch('user/getInfo')
-                    next()
+                    const roles = store.getters.roles
+                    // generate accessible routes map based on roles
+                    const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+
+                    // dynamically add accessible routes
+                    router.addRoutes(accessRoutes)
+
+                    // hack method to ensure that addRoutes is complete
+                    // set the replace: true, so the navigation will not leave a history record
+                    next({ ...to, replace: true })
                 } catch (error) {
                     // remove token and go to login page to re-login
                     await store.dispatch('user/resetToken')
-                    Message.error(error || 'Something wrong, please re-login')
-                    next(`/auth/login?redirect=${to.path}`)
+                    Message.error(error || 'Has Error')
+                    next(`/login?redirect=${to.path}`)
                     NProgress.done()
                 }
             }

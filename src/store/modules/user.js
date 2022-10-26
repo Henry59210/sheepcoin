@@ -1,10 +1,11 @@
 import { register, login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/network/auth'
+import {getToken, setToken, removeToken} from '@/network/auth'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
     return {
         token: getToken(),
+        roles: [],
         username: '',
         userid: ''
     }
@@ -18,6 +19,11 @@ const mutations = {
     },
     SET_TOKEN: (state, token) => {
         state.token = token
+    },
+    SET_ROLES: (state, role) => {
+        let arr = []
+            arr.push(role)
+        state.roles = arr
     },
     SET_NAME: (state, username) => {
         state.username = username
@@ -61,14 +67,14 @@ const actions = {
         return new Promise((resolve, reject) => {
             getInfo().then(response => {
                 const { data } = response
-
                 if (!data) {
                     return reject('Verification failed, please Login again.')
                 }
 
-                const { userName, id } = data
+                const { userName, id, role } = data
 
                 commit('SET_NAME', userName)
+                commit('SET_ROLES', role)
                 commit('SET_ID', id)
                 resolve(data)
             }).catch(error => {

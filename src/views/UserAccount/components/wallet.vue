@@ -2,7 +2,7 @@
  <div>
    <div class="assets-valuation">
      <div class="title" >Your assets valuation:</div>
-     <div style="font-size: 20px;">{{ '≈ ' + asset + ' $'}}</div>
+     <div style="font-size: 20px;">{{ '≈ ' + asset.toFixed(2) + ' $'}}</div>
    </div>
    <div class="all-currency">
      <div class="title">
@@ -34,7 +34,7 @@
                label="24H change"
                sortable>
            <template slot-scope="scope">
-             <span class="table-font" :class="{'increase': scope.row.change>0, 'decrease': scope.row.change<0}">{{ (scope.row.change * 100).toFixed(3) + ' %' }}</span>
+             <span class="table-font" :class="{'increase': scope.row.change>0, 'decrease': scope.row.change<0}">{{ Number(scope.row.change).toFixed(3) + ' %' }}</span>
            </template>
          </el-table-column>
          <el-table-column
@@ -55,6 +55,7 @@
        <el-pagination
            layout="prev, pager, next"
            :total="total"
+           :current-page.sync="currentPage"
            :hide-on-single-page="true"
            @current-change="handleCurrentChange"
            :page-size="10">
@@ -132,6 +133,7 @@ export default {
       userWalletList: [],//拼接后
       selectedCoin: '',
       selectedPlatform: '',
+      currentPage: 1,
       amount: '',
       total: 0,
       allCurrency: [],
@@ -139,10 +141,15 @@ export default {
     }
   },
   mounted() {
-    this.getWalletList()
+    this.currentPage = Number(localStorage.getItem('currentPage')) || 1
+    this.getWalletList(this.currentPage)
+  },
+  beforeUpdate() {
+    localStorage.setItem('currentPage', this.currentPage)
   },
   beforeDestroy(){
     if(this.walletCurrencyStatus.length !== 0) this.$socketApi.closeWebSocket();
+    localStorage.setItem('currentPage', 1 )
   },
   methods: {
     getAddress() {
@@ -163,7 +170,7 @@ export default {
       this.allCurrency = res.data
     },
     jointWalletList(data) {
-      console.log(data)
+      this.asset = 0
       let currentPrice = data.currentPrice
       let priceChangePercentage24h = data.priceChangePercentage24h
       let symbol = data.symbol

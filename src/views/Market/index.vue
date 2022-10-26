@@ -22,14 +22,14 @@
             label="24H change"
             sortable>
           <template slot-scope="scope">
-            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage1hInCurrency>0, 'decrease': scope.row.priceChangePercentage1hInCurrency<0}">{{ (scope.row.priceChangePercentage1hInCurrency * 100).toFixed(3) + ' %' }}</span>
+            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage1hInCurrency>0, 'decrease': scope.row.priceChangePercentage1hInCurrency<0}">{{ Number(scope.row.priceChangePercentage1hInCurrency).toFixed(3) + ' %' }}</span>
           </template>
         </el-table-column>
         <el-table-column
             label="1H change"
             sortable>
           <template slot-scope="scope">
-            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage24h>0, 'decrease': scope.row.priceChangePercentage24h<0}">{{ (scope.row.priceChangePercentage24h * 100).toFixed(3) + ' %' }}</span>
+            <span class="table-font" :class="{'increase': scope.row.priceChangePercentage24h>0, 'decrease': scope.row.priceChangePercentage24h<0}">{{ Number(scope.row.priceChangePercentage24h).toFixed(3) + ' %' }}</span>
           </template>
         </el-table-column>
         <el-table-column

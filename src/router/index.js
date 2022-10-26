@@ -4,7 +4,7 @@ import Layout from "@/Layout/index";
 
 Vue.use(VueRouter)
 
-const constantRoutes = [
+export const constantRoutes = [
   {
     path: '/auth',
     component: () => import('@/views/Login/index'),
@@ -96,6 +96,55 @@ const constantRoutes = [
     ]
   },
   {
+    path: '/BTC/platform',
+    component: () => import('@/views/otherPlatform/otherPlatform')
+  }
+]
+
+const createRouter = () => new VueRouter({
+  // mode: 'history', // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+})
+
+const router = createRouter()
+
+export function resetRouter() {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export const asyncRoutes = [
+  {
+    path: '/manager',
+    component: Layout,
+    name: 'Manager',
+    redirect: '/manager/index',
+    meta: { roles: ['admin'], title: 'Manager' },
+    children: [{
+      path: 'index',
+      redirect: '/manager/index/currency',
+      component: () => import('@/views/ManagerAccount/index'),
+      children: [
+        {
+          path: 'currency',
+          component: () => import('@/views/ManagerAccount/components/currency'),
+          name: 'Currency'
+        },
+        {
+          path: 'coupon',
+          component: () => import('@/views/ManagerAccount/components/coupon'),
+          name: 'Coupon'
+        },
+        {
+          path: 'user',
+          component: () => import('@/views/ManagerAccount/components/user'),
+          name: 'User'
+        }
+      ]
+    }]
+  },
+  {
     path: '/account',
     component: Layout,
     children: [
@@ -104,7 +153,7 @@ const constantRoutes = [
         name: 'Account',
         redirect: '/account/wallet',
         component: () => import('@/views/UserAccount/account'),
-        meta: { title: 'Account' },
+        meta: { title: 'Account', roles: ['user'] },
         children: [
           {
             path: 'wallet',
@@ -126,23 +175,20 @@ const constantRoutes = [
         redirect: '/'
       }
     ]
-  }
+  },
 ]
 
-const createRouter = () => new VueRouter({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
-})
 
-const router = createRouter()
-
-
-export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
 }
 
+const originalReplace = VueRouter.prototype.replace
+VueRouter.prototype.replace = function replace (location) {
+  return originalReplace.call(this, location).catch(err => err)
+}
 
 
 export default router

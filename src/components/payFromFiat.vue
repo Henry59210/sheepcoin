@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div style="height: 100%; width: 100%">
     <div v-if="!isSuccess"  class="fiat-payment-container" v-loading="loading">
       <div class="price-display-container">
         {{ finalForm.fiatType + '  ' + finalForm.fiatAmount }}
       </div>
       <div>{{ 'you will receive' + finalForm.currencyAmount + ' ' + finalForm.currencyType}}</div>
-      <div class="cards-display-container">
+      <div v-if="haveCard" class="cards-display-container">
         <div class="card-place" v-for="item in userCards" :key="item.id">
           <el-card shadow="hover" class="box-card" :class="{'isActivated': selectedCard===item.id }" @click.native="chooseCard(item)">
             <div class="card-info">
@@ -16,6 +16,9 @@
             </div>
           </el-card>
         </div>
+      </div>
+      <div v-if="!haveCard" class="cards-display-container noCard">
+        <el-button @click="goToAccount">Add your card first</el-button>
       </div>
     </div>
     <div v-if="isSuccess" class="fiat-payment-container">
@@ -40,6 +43,7 @@ export default {
   },
   data() {
     return {
+      haveCard: false,
       isSuccess: false,
       paymentDialogVisible: false,
       isChooseCard: false,
@@ -57,12 +61,16 @@ export default {
       this.loading = true
       let res = await getCard()
       this.userCards = res.data
+      this.userCards.length === 0 ? this.haveCard = false : this.haveCard = true
       this.loading = false
     },
     chooseCard(cardInfo) {
       this.selectedCard = cardInfo.id
       this.paymentCard = cardInfo
       this.isChooseCard = true
+    },
+    goToAccount() {
+      this.$router.push('/account')
     }
   }
 }
@@ -81,8 +89,17 @@ export default {
   box-sizing: border-box;
 }
 .cards-display-container {
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
   height: 70%;
   overflow: scroll;
+}
+.noCard {
+  background: #e5e5e5;
+  opacity: 0.8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .card-place {
   width: 100%;

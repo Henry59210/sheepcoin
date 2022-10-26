@@ -46,8 +46,8 @@
         <h2 class="featurette-heading fw-normal lh-1">Leading digital asset trading platform. <span class="text-muted">Quality digital assets.</span></h2>
         <p class="lead">Some great placeholder content for the first featurette here. Imagine some exciting prose here.</p>
         <div class="col-md-7" >
-          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
         </div>
       </div>
       <div class="col-md-5">
@@ -62,8 +62,8 @@
         <h2 class="featurette-heading fw-normal lh-1">The world's top security risk control system. <span class="text-muted">Top-level security risk control.</span></h2>
         <p class="lead">Multi-factor encryption means, 7 days and 24 hours a day platform monitoring, all-round protection of user asset security.</p>
         <div class="col-md-7 order-md-2" >
-          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
         </div>
 
       </div>
@@ -79,8 +79,8 @@
         <h2 class="featurette-heading fw-normal lh-1">Millions of users trust the choice. <span class="text-muted">More than 200 countries are covered.</span></h2>
         <p class="lead">Localized transaction service centers have been set up in many countries and regions around the world to create a blockchain ecosystem integrating multiple business forms.</p>
         <div class="col-md-7 " >
-          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
         </div>
       </div>
       <div class="col-md-5">
@@ -95,8 +95,8 @@
         <h2 class="featurette-heading fw-normal lh-1">Start trading anytime, anywhere. <span class="text-muted">See for yourself.</span></h2>
         <p class="lead">Browse real-time Huobi data anytime and anywhere, and trade with simple operation. Freedom to buy and sell. Safe and reliable, simple operation.</p>
         <div class="col-md-7 order-md-2" >
-          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
-          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_left"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
+<!--          <img class="bd-placeholder-img rounded-circle small_icon_right"  src="../../assets/img/home/1-1.svg" x="50%" y="50%" dy=".3em" alt="">-->
         </div>
       </div>
       <div class="col-md-5 order-md-1">
@@ -186,7 +186,6 @@
 }
 
 body {
-
     padding-bottom: 3rem;
     color: #5a5a5a;
     margin: 0;

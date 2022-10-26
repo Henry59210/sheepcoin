@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     userRegister() {
-      this.$refs.loginForm.validate(async (valid) => {
+      this.$refs.registerForm.validate(async (valid) => {
         if (valid) {
           this.loading = true
           await this.$store.dispatch('user/register', this.registerForm)

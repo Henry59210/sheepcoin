@@ -40,13 +40,17 @@ export default {
   },
   computed: {
     routes() {
-      let result = []
-      this.$router.options.routes.forEach(item=>{if(item.name) result.push(item)})
-      return result
+      return this.$store.getters.permission_routes.filter(item=>{ return item.name})
     },
+    // routes() {
+    //   const newRouter = this.$router.options.routes.filter(item=>{return item.name})
+    //   return newRouter
+    //},
     accountOptions() {
       let result = []
-      this.$router.options.routes.forEach(item=>{if(item.path === '/account') result = [...item.children]})
+      this.$store.getters.permission_routes.forEach(item=>{
+        if(item.path === '/account') result = [...item.children]
+      })
       return result
     },
     username() {
@@ -56,7 +60,13 @@ export default {
   methods: {
     handleCommand(command) {
       switch (command) {
-        case 'Account': this.$router.push('/account'); break;
+        case 'Account':
+          this.$router.push('/account');
+          break;
+        case 'Logout':
+          this.$store.dispatch('user/logout');
+          this.$router.push('/home');
+          break;
       }
     }
   }
