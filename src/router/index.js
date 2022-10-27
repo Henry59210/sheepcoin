@@ -96,6 +96,38 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/account',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: 'Account',
+        redirect: '/account/wallet',
+        component: () => import('@/views/UserAccount/account'),
+        meta: { title: 'Account', roles: ['user'] },
+        children: [
+          {
+            path: 'wallet',
+            name: 'Wallet',
+            component: () => import('@/views/UserAccount/components/wallet'),
+            meta: { title: 'Account' }
+          },
+          {
+            path: 'order',
+            name: 'Order',
+            component: () => import('@/views/UserAccount/components/order'),
+            meta: { title: 'Order' }
+          }
+        ]
+      },
+      {
+        path: 'logout',
+        name: 'Logout',
+        redirect: '/'
+      }
+    ]
+  },
+  {
     path: '/BTC/platform',
     component: () => import('@/views/otherPlatform/otherPlatform')
   }
@@ -143,39 +175,7 @@ export const asyncRoutes = [
         }
       ]
     }]
-  },
-  {
-    path: '/account',
-    component: Layout,
-    children: [
-      {
-        path: '',
-        name: 'Account',
-        redirect: '/account/wallet',
-        component: () => import('@/views/UserAccount/account'),
-        meta: { title: 'Account', roles: ['user'] },
-        children: [
-          {
-            path: 'wallet',
-            name: 'Wallet',
-            component: () => import('@/views/UserAccount/components/wallet'),
-            meta: { title: 'Account' }
-          },
-          {
-            path: 'order',
-            name: 'Order',
-            component: () => import('@/views/UserAccount/components/order'),
-            meta: { title: 'Order' }
-          }
-        ]
-      },
-      {
-        path: 'logout',
-        name: 'Logout',
-        redirect: '/'
-      }
-    ]
-  },
+  }
 ]
 
 

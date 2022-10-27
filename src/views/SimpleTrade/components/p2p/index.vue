@@ -26,13 +26,13 @@
         <el-table-column
             label="Seller">
           <template slot-scope="scope">
-            <span>{{ scope.row.sellerUsername ? scope.row.sellerUsername : 'wrong' }}</span>
+            <span>{{ scope.row.sellerUsername ? scope.row.sellerUsername : '****' }}</span>
           </template>
         </el-table-column>
         <el-table-column
             label="Currency Type">
           <template slot-scope="scope">
-            <span>{{ scope.row.currencySymbol ? scope.row.currencySymbol.toUpperCase() : 'wrong' }}</span>
+            <span>{{ scope.row.currencySymbol ? scope.row.currencySymbol.toUpperCase() : '****' }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -115,7 +115,7 @@ export default {
   data() {
     var checkCurrencyAmount = (rule, value, callback) => {
       let reg = /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g;
-      if (value > this.selectedCurrencyAmount) {
+      if (Number(value) > this.selectedCurrencyAmount) {
         callback(new Error('Insufficient balance, please top up your Wallet.'));
       } else if (!reg.test(value)) {
         callback(new Error('Must be number'));
@@ -145,7 +145,7 @@ export default {
       },
       rule: {
         currencyAmount: [
-          { validator: checkCurrencyAmount, trigger: 'blur'}
+          { validator: checkCurrencyAmount, trigger: 'change'}
         ],
         fiatRule: [
           { type: 'number', message: 'Currency must be number!'},
@@ -154,6 +154,7 @@ export default {
       },
       //----buyForm-----
       buyForm: {
+        sellerId: '',
         fiatAmount: '',
         fiatType: 'USD',
         currencyType: '',
@@ -243,9 +244,12 @@ export default {
 
     //------buyForm-----
     buy(data) {
+      this.buyForm.sellerUsername = data.sellerUsername
+      this.buyForm.id = data.id
       this.buyForm.currencyAmount = data.amount
       this.buyForm.currencyType = data.currencySymbol
       this.buyForm.fiatAmount = data.price
+      this.buyForm.sellerId = data.sellerId
       this.$store.commit('trade/SET_BUYTYPE', 'p2p')
       this.$store.commit('trade/SET_BUYFORM', this.buyForm)
       this.$store.commit('trade/SET_FIATDIALOG', true)

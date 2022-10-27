@@ -125,7 +125,9 @@ export default {
             }
             if(that.$store.getters.buyType === 'p2p') {
               buyData = {
-                sellerId: that.$store.getters.userid,
+                sellerUsername: that.buyForm.sellerUsername,
+                id: that.buyForm.id,
+                sellerId: that.buyForm.sellerId,
                 amount: Number(that.buyForm.currencyAmount),
                 currencySymbol: that.buyForm.currencyType,
                 price: Number(that.buyForm.fiatAmount)
@@ -138,7 +140,7 @@ export default {
               this.$refs.payFromFiat.loading = false
               this.$refs.payFromFiat.isSuccess = true
               this.canNotCancel = true
-            }, 800)
+            }, 1000)
           }).catch(()=>{
             this.$refs.payFromFiat.loading = false
           })
@@ -147,7 +149,8 @@ export default {
           this.$refs.payFromFiat.isSuccess = false
           this.canNotCancel = false
         }
-      } else {
+      }
+      else {
         this.$message.warning('Please choose your card!')
       }
     },
