@@ -64,8 +64,9 @@ export default {
           this.$router.push('/account');
           break;
         case 'Logout':
-          this.$store.dispatch('user/logout');
-          this.$router.push('/home');
+          this.$store.dispatch('user/logout').then(() => {
+            this.$router.push('/home').then(()=>{location.reload()});
+          })
           break;
       }
     }
