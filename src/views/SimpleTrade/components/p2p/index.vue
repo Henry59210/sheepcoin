@@ -89,8 +89,8 @@
             </div>
             <div class="enter-amount">
               <div class="text-hint">you will receive</div>
-              <el-form-item class="input-container" prop="fiatRule">
-                <el-input v-model="sellForm.fiatAmount" placeholder="Enter Amount" :disabled="sellForm.currencyType===''"></el-input>
+              <el-form-item class="input-container" prop="fiatAmount">
+                <el-input v-model.number="sellForm.fiatAmount" placeholder="Enter Amount" :disabled="sellForm.currencyType===''"></el-input>
               </el-form-item>
               <el-form-item class="select-container">
                 <el-select v-model="sellForm.fiatType" :disabled="true" filterable placeholder="Fiat"></el-select>
@@ -147,7 +147,7 @@ export default {
         currencyAmount: [
           { validator: checkCurrencyAmount, trigger: 'change'}
         ],
-        fiatRule: [
+        fiatAmount: [
           { type: 'number', message: 'Currency must be number!'},
           { required: true, message: 'Don\'t forget enter money!', trigger: 'blur'}
         ],
