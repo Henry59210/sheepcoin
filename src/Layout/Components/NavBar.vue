@@ -15,7 +15,7 @@
       <router-link class="main-options" tag="div" v-for="route in routes" :key="route.path" :to="route.path">{{route.name}}</router-link>
     </div>
     <div class="null-place" ></div>
-    <div class="account-info-container">
+    <div v-if="iconShow" class="account-info-container">
       <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             <i class="el-icon-user-solid"></i>
@@ -33,12 +33,17 @@
 
 <script>
 
+import {getToken} from "@/network/auth";
+
 export default {
   name: "NavBar",
   props: {
 
   },
   computed: {
+    iconShow () {
+      return getToken()
+    },
     routes() {
       return this.$store.getters.permission_routes.filter(item=>{ return item.name})
     },
