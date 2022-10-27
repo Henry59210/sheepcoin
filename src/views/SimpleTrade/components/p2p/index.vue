@@ -315,7 +315,7 @@ export default {
   text-align: right;
 }
 .sell-container {
-  height: 40vh;
+
 }
 /*-----------*/
 .sell-operate-container {

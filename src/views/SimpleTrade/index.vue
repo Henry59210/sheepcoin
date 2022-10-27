@@ -31,7 +31,7 @@
     <el-dialog
         title="Sell"
         :visible.sync="currencySellDialogVisible"
-        width="40%"
+        width="30%"
         @close="close"
         center>
       <div class="dialog-content-container">
@@ -230,7 +230,6 @@ export default {
 }
 .dialog-content-container {
   width: 100%;
-  height: 40vh;
 }
 
 /deep/.el-menu-item {
