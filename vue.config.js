@@ -3,9 +3,10 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   devServer: {
+    https: true,
     proxy: {
       '/api/v1': {
-        target: 'http://43.156.54.223:30081', // 这里可以跟随项目实际部署服务器来
+        target: 'https://43.156.54.223:443', // 这里可以跟随项目实际部署服务器来
         secure: false, // 如果是https接口，需要配置这个参数
         changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
         ws: true,
