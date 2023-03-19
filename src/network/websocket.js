@@ -6,7 +6,11 @@ var webSocket = null;
 var isConnect = false; //连接状态
 var globalCallback = function(e){ console.log(e) };//定义外部接收数据的回调函数
 var reConnectNum = 0;//重连次数
-var baseURL = 'ws://43.156.54.223:30081'
+var baseURL = 'ws://10.144.211.163:8080';
+// eslint-disable-next-line no-unused-vars
+var currentTarget = '';
+// eslint-disable-next-line no-unused-vars
+var currentCb = null;
 
 //心跳设置
 var heartCheck = {
@@ -34,6 +38,8 @@ var heartCheck = {
 //初始化websocket
 function initWebSocket(websocketUrl, callback) {
     let url = baseURL + websocketUrl
+    currentTarget  = websocketUrl
+    currentCb = callback
     //此callback为在其他地方调用时定义的接收socket数据的函数
     if(callback){
         if(typeof callback == 'function'){
@@ -61,6 +67,7 @@ function initWebSocket(websocketUrl, callback) {
     };
     //关闭
     webSocket.onclose = function(e) {
+        console.log(e)
         webSocketOnClose(e);
     };
     //连接发生错误的回调方法
@@ -95,7 +102,7 @@ function webSocketOnClose(e){
     //被动断开，重新连接
     if(e.code == 1006){
         if(reConnectNum < 3){
-            initWebSocket();
+            initWebSocket(currentTarget, currentCb);
             ++reConnectNum;
         }else{
             v.$message({

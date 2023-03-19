@@ -71,9 +71,13 @@ export default {
       this.$refs.loginForm.validate(async (valid) => {
         if (valid) {
           this.loading = true
-          await this.$store.dispatch('user/login', this.loginForm)
-          await this.$router.push({path: this.redirect!=='/login' ? this.redirect : '/'})
-          console.log(this.redirect)
+          try {
+            await this.$store.dispatch('user/login', this.loginForm)
+            await this.$router.push({path: this.redirect!=='/login' ? this.redirect : '/'})
+          }
+          catch (e) {
+            this.loading = false
+          }
           this.loading = false
         } else {
           alert('error format!!');

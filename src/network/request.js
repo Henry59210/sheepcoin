@@ -4,8 +4,8 @@ import store from "@/store/index"
 import {Message, MessageBox} from "element-ui";
 
 const service = axios.create({
-    baseURL: '/api/v1',
-    timeout:5000,
+    baseURL: '', //这个baseURL是所有request请求的地址，webpack里的代理看到这个就会进入代理，可以把链接修改成你想要的样子
+    timeout: 10000,
 })
 
 // request interceptor
@@ -16,6 +16,7 @@ service.interceptors.request.use(
             // ['***'] is a custom headers key
             // please modify it according to the actual situation
             config.headers['Sheep-Token'] = getToken()
+
         }
         return config
     },

@@ -28,12 +28,12 @@ router.beforeEach(async(to, from, next) => {
         } else {
             const hasGetUserInfo = store.getters.username
             if (hasGetUserInfo) {
-                next()
+                next() //next函数就是继续的意思，必须要有
             } else {
                 try {
                     // get user info
-                    // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
                     await store.dispatch('user/getInfo')
+                    // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
                     const roles = store.getters.roles
                     // generate accessible routes map based on roles
                     const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
@@ -68,5 +68,6 @@ router.beforeEach(async(to, from, next) => {
 
 router.afterEach(() => {
     // finish progress bar
+    // window.scrollTo(0,0);
     NProgress.done()
 })

@@ -23,7 +23,7 @@
           :default-sort = "{prop: 'date', order: 'descending'}"
           v-loading="loading">
         <el-table-column
-            prop="buyerUsername"
+            prop="buyerId"
             label="Buyer">
         </el-table-column>
         <el-table-column

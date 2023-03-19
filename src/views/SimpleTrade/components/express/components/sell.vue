@@ -51,7 +51,7 @@ export default {
   data() {
     var checkCurrencyAmount = (rule, value, callback) => {
       let reg = /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g;
-      if (value > this.selectedCurrencyAmount) {
+      if (parseFloat(value) > this.selectedCurrencyAmount) {
         callback(new Error('Insufficient balance, please top up your Wallet.'));
       } else if (!reg.test(value)) {
         callback(new Error('Must be number'));
@@ -143,7 +143,7 @@ export default {
         }
       }, 500)
       let res  = await getCurrencyAmount(this.sellForm.currencyType)
-      this.selectedCurrencyAmount = res.data.amount.toFixed(4)
+      this.selectedCurrencyAmount = parseFloat(res.data.amount.toFixed(4))
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

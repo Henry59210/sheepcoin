@@ -39,8 +39,9 @@ const actions = {
         const { username, password } = userInfo
         return new Promise((resolve, reject) => {
             login({ username: username.trim(), password: password }).then(response => {
+                console.log(response)
                 const { token } = response
-                commit('SET_TOKEN', token)
+                commit('SET_TOKEN', token) //可有可无
                 setToken(token)
                 resolve()
             }).catch(error => {
@@ -70,9 +71,7 @@ const actions = {
                 if (!data) {
                     return reject('Verification failed, please Login again.')
                 }
-
                 const { userName, id, role } = data
-
                 commit('SET_NAME', userName)
                 commit('SET_ROLES', role)
                 commit('SET_ID', id)

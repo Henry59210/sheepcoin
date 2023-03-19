@@ -110,6 +110,7 @@ export default {
         spinner: 'el-icon-loading',
         background: 'rgba(255, 255, 255, 0.9)'
       });
+      console.log(this.buyForm)
       this.websocketSend(this.buyForm.currencyType)
       let waitStatus = setInterval(()=>{
         console.log(this.buyForm.currencyType +'---'+ this.curCurrencyStatus.curCurrencyType)

@@ -118,8 +118,9 @@
 <script>
 
 import {getWalletList} from "@/api/account";
-import {deepClone} from "@/utils/usefulTools";
+// import {deepClone} from "@/utils/usefulTools";
 import {getAllCurrency} from "@/api/simpleTrade";
+import {deepClone} from "@/utils/usefulTools";
 
 export default {
   name: "wallet",
@@ -185,10 +186,22 @@ export default {
           arr[i].high24h = high24h
           arr[i].low24h = low24h
           arr[i].name = name
+          this.$set(this.walletCurrencyStatus, i, arr[i])
         }
-        this.asset += arr[i].price * arr[i].amount || 0
+        this.asset += this.walletCurrencyStatus[i].price * this.walletCurrencyStatus[i].amount || 0
+        //this.asset += arr[i].price * arr[i].amount || 0
       }
-      this.userWalletList = arr
+      // for (let i=0; i<this.walletCurrencyStatus.length; i++) {
+      //   if(this.walletCurrencyStatus[i].currencySymbol === symbol) {
+      //     this.$set(this.walletCurrencyStatus, i, )[i].price = currentPrice
+      //     this.walletCurrencyStatus[i].change = priceChangePercentage24h
+      //     this.walletCurrencyStatus[i].high24h = high24h
+      //     this.walletCurrencyStatus[i].low24h = low24h
+      //     this.walletCurrencyStatus[i].name = name
+      //   }
+      //   this.asset += this.walletCurrencyStatus[i].price * this.walletCurrencyStatus[i].amount || 0
+      // }
+      this.userWalletList = this.walletCurrencyStatus
     },
     async getWalletList(val) {
       let page = val || 1
